@@ -1,4 +1,3 @@
-// Employe.java
 package com.example.suiviprojet.entities;
 
 import jakarta.persistence.*;

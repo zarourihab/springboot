@@ -54,7 +54,7 @@ public class Organisme {
     public String getNomContact() { return nomContact; }
     public void setNomContact(String nomContact) { this.nomContact = nomContact; }
 
-    // Méthodes supplémentaires pour compatibilité avec service
+
     public String getContact() { return nomContact; }
     public void setContact(String contact) { this.nomContact = contact; }
 

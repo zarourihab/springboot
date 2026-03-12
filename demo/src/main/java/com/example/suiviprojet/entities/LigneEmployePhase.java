@@ -13,17 +13,17 @@ public class LigneEmployePhase {
     private LocalDate dateDebut;
     private LocalDate dateFin;
 
-    // Relation ManyToOne vers Employe [cite: 29, 31, 59]
+
     @ManyToOne
     private Employe employe;
 
-    // Relation ManyToOne vers Phase [cite: 26, 29]
+
     @ManyToOne
     private Phase phase;
 
     public LigneEmployePhase() {}
 
-    // Getters et Setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

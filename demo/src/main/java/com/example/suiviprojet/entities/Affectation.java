@@ -20,7 +20,7 @@ public class Affectation {
     @JoinColumn(name = "phase_id")
     private Phase phase;
 
-    // Autres champs si nécessaire (ex : dateDebut, dateFin, rôle, etc.)
+
     private String role;
 
     public Affectation() {}

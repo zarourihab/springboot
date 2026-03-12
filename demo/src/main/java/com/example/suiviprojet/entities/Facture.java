@@ -17,10 +17,10 @@ public class Facture {
     @OneToOne
     private Phase phase;
 
-    // 1. Constructor khawi
+
     public Facture() {}
 
-    // 2. Getters & Setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
