@@ -66,6 +66,8 @@ public class EmployeService {
     }
 
     public void delete(Long id) {
+        Employe employe = employeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
         employeRepository.deleteById(id);
     }
 

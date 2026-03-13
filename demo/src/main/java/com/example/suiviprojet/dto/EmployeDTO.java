@@ -17,13 +17,13 @@ public class EmployeDTO {
     public String prenom;
 
     public String telephone;
-
+    @NotBlank(message = "L'email est obligatoire")
     @Email(message = "Email invalide")
     public String email;
 
     @NotBlank(message = "Le login est obligatoire")
     public String login;
-
+    @NotBlank(message = "Le password est obligatoire")
     public String password;
 
     public Long profilId;

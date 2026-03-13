@@ -1,103 +1,190 @@
 package com.example.suiviprojet.service;
 
 import com.example.suiviprojet.dto.ProjetDTO;
-import com.example.suiviprojet.entities.*;
-import com.example.suiviprojet.repositories.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.suiviprojet.entities.Employe;
+import com.example.suiviprojet.entities.Organisme;
+import com.example.suiviprojet.entities.Phase;
+import com.example.suiviprojet.entities.Projet;
+import com.example.suiviprojet.repositories.EmployeRepository;
+import com.example.suiviprojet.repositories.OrganismeRepository;
+import com.example.suiviprojet.repositories.ProjetRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjetService {
 
-    @Autowired private ProjetRepository projetRepo;
-    @Autowired private OrganismeRepository orgRepo;
-    @Autowired private EmployeRepository empRepo;
+    private final ProjetRepository projetRepository;
+    private final OrganismeRepository organismeRepository;
+    private final EmployeRepository employeRepository;
 
-    // --- CRUD Operations ---
-
-    public Projet create(ProjetDTO dto) {
-        validateProjetDates(dto);
-        if (projetRepo.existsByCode(dto.getCode())) {
-            throw new RuntimeException("Le code projet doit être unique.");
-        }
-        Projet p = mapDtoToEntity(dto, new Projet());
-        return projetRepo.save(p);
+    public ProjetService(ProjetRepository projetRepository,
+                         OrganismeRepository organismeRepository,
+                         EmployeRepository employeRepository) {
+        this.projetRepository = projetRepository;
+        this.organismeRepository = organismeRepository;
+        this.employeRepository = employeRepository;
     }
 
-    public Projet update(Long id, ProjetDTO dto) {
-        Projet p = projetRepo.findById(id).orElseThrow(() -> new RuntimeException("Projet introuvable"));
-        validateProjetDates(dto);
-        Projet updatedP = mapDtoToEntity(dto, p);
-        return projetRepo.save(updatedP);
+    public ProjetDTO create(ProjetDTO dto) {
+        validateProjet(dto);
+
+        if (projetRepository.existsByCode(dto.getCode())) {
+            throw new RuntimeException("Le code projet est déjà utilisé");
+        }
+
+        Projet projet = new Projet();
+        mapDtoToEntity(dto, projet);
+
+        projet = projetRepository.save(projet);
+        return mapEntityToDto(projet);
+    }
+
+    public ProjetDTO update(Long id, ProjetDTO dto) {
+        Projet projet = projetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+
+        validateProjet(dto);
+
+        projetRepository.findByCode(dto.getCode()).ifPresent(existingProjet -> {
+            if (!existingProjet.getId().equals(id)) {
+                throw new RuntimeException("Le code projet est déjà utilisé");
+            }
+        });
+
+        mapDtoToEntity(dto, projet);
+        projet = projetRepository.save(projet);
+
+        return mapEntityToDto(projet);
     }
 
     public void delete(Long id) {
-        Projet p = projetRepo.findById(id).orElseThrow(() -> new RuntimeException("Projet introuvable"));
-        if (p.getPhases() != null && !p.getPhases().isEmpty()) {
-            throw new RuntimeException("Impossible de supprimer : le projet contient des phases.");
+        Projet projet = projetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+
+        if (projet.getPhases() != null && !projet.getPhases().isEmpty()) {
+            throw new RuntimeException("Impossible de supprimer : le projet contient des phases");
         }
-        projetRepo.delete(p);
+
+        projetRepository.delete(projet);
     }
 
-    public List<Projet> findAll() { return projetRepo.findAll(); }
-
-    public Projet findById(Long id) {
-        return projetRepo.findById(id).orElseThrow(() -> new RuntimeException("Projet introuvable"));
+    public ProjetDTO findById(Long id) {
+        Projet projet = projetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+        return mapEntityToDto(projet);
     }
 
-    // --- Business Logic & Summary ---
+    public List<ProjetDTO> findAll(String query) {
+        List<Projet> projets;
+
+        if (query != null && !query.isBlank()) {
+            projets = projetRepository.findByNomContainingOrCodeContaining(query, query);
+        } else {
+            projets = projetRepository.findAll();
+        }
+
+        return projets.stream()
+                .map(this::mapEntityToDto)
+                .collect(Collectors.toList());
+    }
 
     public Map<String, Object> getResume(Long id) {
-        Projet p = projetRepo.findById(id)
+        Projet projet = projetRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Projet introuvable"));
 
         Map<String, Object> resume = new HashMap<>();
+        resume.put("id", projet.getId());
+        resume.put("codeProjet", projet.getCode());
+        resume.put("nomProjet", projet.getNom());
+        resume.put("description", projet.getDescription());
+        resume.put("dateDebut", projet.getDateDebut());
+        resume.put("dateFin", projet.getDateFin());
+        resume.put("montantProjet", projet.getMontant());
 
-        resume.put("nomProjet", p.getNom());
-        resume.put("codeProjet", p.getCode());
-
-        if (p.getChefProjet() != null) {
-            resume.put("chefProjet", p.getChefProjet().getNom() + " " + p.getChefProjet().getPrenom());
+        if (projet.getOrganisme() != null) {
+            resume.put("organisme", projet.getOrganisme().getNom());
         } else {
-            resume.put("chefProjet", "Aucun chef assigné");
+            resume.put("organisme", null);
         }
 
-        if (p.getDateDebut() != null && p.getDateFin() != null) {
-            long jours = ChronoUnit.DAYS.between(p.getDateDebut(), p.getDateFin());
-            resume.put("dureeEnJours", jours);
+        if (projet.getChefProjet() != null) {
+            resume.put("chefProjet",
+                    projet.getChefProjet().getNom() + " " + projet.getChefProjet().getPrenom());
+        } else {
+            resume.put("chefProjet", null);
         }
+
+        if (projet.getDateDebut() != null && projet.getDateFin() != null) {
+            long duree = ChronoUnit.DAYS.between(projet.getDateDebut(), projet.getDateFin());
+            resume.put("dureeEnJours", duree);
+        }
+
+        int nombrePhases = projet.getPhases() != null ? projet.getPhases().size() : 0;
+        resume.put("nombrePhases", nombrePhases);
+
+        double totalMontantsPhases = 0.0;
+        if (projet.getPhases() != null) {
+            for (Phase phase : projet.getPhases()) {
+                if (phase.getMontant() != null) {
+                    totalMontantsPhases += phase.getMontant();
+                }
+            }
+        }
+        resume.put("totalMontantsPhases", totalMontantsPhases);
 
         return resume;
     }
 
-    // --- Helpers ---
+    private void validateProjet(ProjetDTO dto) {
+        if (dto.getDateDebut() != null && dto.getDateFin() != null
+                && dto.getDateDebut().isAfter(dto.getDateFin())) {
+            throw new RuntimeException("La date de début doit être avant ou égale à la date de fin");
+        }
 
-    private void validateProjetDates(ProjetDTO dto) {
-        if (dto.getDateDebut().isAfter(dto.getDateFin())) {
-            throw new RuntimeException("La date de début doit être avant la date de fin.");
+        if (dto.getMontant() != null && dto.getMontant() < 0) {
+            throw new RuntimeException("Le montant ne peut pas être négatif");
         }
     }
 
-    private Projet mapDtoToEntity(ProjetDTO dto, Projet p) {
-        p.setCode(dto.getCode());
-        p.setNom(dto.getNom());
-        p.setDescription(dto.getDescription());
-        p.setDateDebut(dto.getDateDebut());
-        p.setDateFin(dto.getDateFin());
-        p.setMontant(dto.getMontant());
+    private void mapDtoToEntity(ProjetDTO dto, Projet projet) {
+        projet.setCode(dto.getCode());
+        projet.setNom(dto.getNom());
+        projet.setDescription(dto.getDescription());
+        projet.setDateDebut(dto.getDateDebut());
+        projet.setDateFin(dto.getDateFin());
+        projet.setMontant(dto.getMontant());
 
-        Organisme org = orgRepo.findById(dto.getOrganismeId())
+        Organisme organisme = organismeRepository.findById(dto.getOrganismeId())
                 .orElseThrow(() -> new RuntimeException("Organisme non trouvé"));
-        Employe emp = empRepo.findById(dto.getChefProjetId())
+
+        Employe chefProjet = employeRepository.findById(dto.getChefProjetId())
                 .orElseThrow(() -> new RuntimeException("Chef de projet non trouvé"));
 
-        p.setOrganisme(org);
-        p.setChefProjet(emp);
-        return p;
+        projet.setOrganisme(organisme);
+        projet.setChefProjet(chefProjet);
+    }
+
+    private ProjetDTO mapEntityToDto(Projet projet) {
+        ProjetDTO dto = new ProjetDTO();
+        dto.setId(projet.getId());
+        dto.setCode(projet.getCode());
+        dto.setNom(projet.getNom());
+        dto.setDescription(projet.getDescription());
+        dto.setDateDebut(projet.getDateDebut());
+        dto.setDateFin(projet.getDateFin());
+        dto.setMontant(projet.getMontant());
+        dto.setOrganismeId(
+                projet.getOrganisme() != null ? projet.getOrganisme().getId() : null
+        );
+        dto.setChefProjetId(
+                projet.getChefProjet() != null ? projet.getChefProjet().getId() : null
+        );
+        return dto;
     }
 }
