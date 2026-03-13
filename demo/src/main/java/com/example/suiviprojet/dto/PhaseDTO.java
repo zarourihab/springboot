@@ -1,5 +1,7 @@
 package com.example.suiviprojet.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 public class PhaseDTO {
@@ -11,11 +13,11 @@ public class PhaseDTO {
     public String libelle;
 
     public String description;
-
+    @NotNull
     public LocalDate dateDebut;
-
+    @NotNull
     public LocalDate dateFin;
-
+    @NotNull
     public Double montant;
 
     public Boolean etatRealisation;
@@ -25,5 +27,6 @@ public class PhaseDTO {
     public Boolean etatPaiement;
 
     public Long projetId;
+
 
 }

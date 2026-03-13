@@ -16,13 +16,33 @@ public class PhaseService {
     private final PhaseRepository phaseRepository;
     private final ProjetRepository projetRepository;
 
-    public PhaseService(PhaseRepository phaseRepository, ProjetRepository projetRepository) {
+    public PhaseService(PhaseRepository phaseRepository,
+                        ProjetRepository projetRepository) {
         this.phaseRepository = phaseRepository;
         this.projetRepository = projetRepository;
     }
 
-    // Créer une phase
     public PhaseDTO create(PhaseDTO dto) {
+
+        Projet projet = projetRepository.findById(dto.projetId)
+                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+
+        if (dto.dateDebut == null || dto.dateFin == null) {
+            throw new RuntimeException("Les dates de la phase sont obligatoires");
+        }
+
+        if (projet.getDateDebut() == null || projet.getDateFin() == null) {
+            throw new RuntimeException("Les dates du projet sont manquantes");
+        }
+
+        if (dto.dateDebut.isAfter(dto.dateFin)) {
+            throw new RuntimeException("La date de début doit être avant ou égale à la date de fin");
+        }
+
+        if (dto.dateDebut.isBefore(projet.getDateDebut())
+                || dto.dateFin.isAfter(projet.getDateFin())) {
+            throw new RuntimeException("Dates de phase hors intervalle du projet");
+        }
 
         Phase phase = new Phase();
 
@@ -32,23 +52,18 @@ public class PhaseService {
         phase.setDateDebut(dto.dateDebut);
         phase.setDateFin(dto.dateFin);
         phase.setMontant(dto.montant);
-        phase.setEtatRealisation(dto.etatRealisation);
-        phase.setEtatFacturation(dto.etatFacturation);
-        phase.setEtatPaiement(dto.etatPaiement);
 
-        Projet projet = projetRepository.findById(dto.projetId)
-                .orElseThrow(() -> new RuntimeException("Projet non trouvé"));
+        phase.setEtatRealisation(false);
+        phase.setEtatFacturation(false);
+        phase.setEtatPaiement(false);
 
         phase.setProjet(projet);
 
         phase = phaseRepository.save(phase);
 
-        dto.id = phase.getId();
-
-        return dto;
+        return convertToDTO(phase);
     }
 
-    // Trouver une phase par ID
     public PhaseDTO findById(Long id) {
 
         Phase phase = phaseRepository.findById(id)
@@ -57,7 +72,6 @@ public class PhaseService {
         return convertToDTO(phase);
     }
 
-    // Liste de toutes les phases
     public List<PhaseDTO> findAll() {
 
         return phaseRepository.findAll()
@@ -66,7 +80,6 @@ public class PhaseService {
                 .collect(Collectors.toList());
     }
 
-    // Phases d’un projet
     public List<PhaseDTO> findByProjet(Long projetId) {
 
         return phaseRepository.findByProjetId(projetId)
@@ -75,11 +88,31 @@ public class PhaseService {
                 .collect(Collectors.toList());
     }
 
-    // Modifier une phase
     public PhaseDTO update(Long id, PhaseDTO dto) {
 
         Phase phase = phaseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+
+        Projet projet = phase.getProjet();
+
+        if (dto.dateDebut == null || dto.dateFin == null) {
+            throw new RuntimeException("Les dates de la phase sont obligatoires");
+        }
+
+        if (dto.dateDebut.isAfter(dto.dateFin)) {
+            throw new RuntimeException("La date de début doit être avant ou égale à la date de fin");
+        }
+
+        if (projet != null) {
+            if (projet.getDateDebut() == null || projet.getDateFin() == null) {
+                throw new RuntimeException("Les dates du projet sont manquantes");
+            }
+
+            if (dto.dateDebut.isBefore(projet.getDateDebut())
+                    || dto.dateFin.isAfter(projet.getDateFin())) {
+                throw new RuntimeException("Dates de phase hors intervalle du projet");
+            }
+        }
 
         phase.setCode(dto.code);
         phase.setLibelle(dto.libelle);
@@ -87,21 +120,52 @@ public class PhaseService {
         phase.setDateDebut(dto.dateDebut);
         phase.setDateFin(dto.dateFin);
         phase.setMontant(dto.montant);
-        phase.setEtatRealisation(dto.etatRealisation);
-        phase.setEtatFacturation(dto.etatFacturation);
-        phase.setEtatPaiement(dto.etatPaiement);
 
-        phaseRepository.save(phase);
+        phase = phaseRepository.save(phase);
 
         return convertToDTO(phase);
     }
 
-    // Supprimer une phase
     public void delete(Long id) {
         phaseRepository.deleteById(id);
     }
 
-    // Conversion Entity → DTO
+    public PhaseDTO realiser(Long id) {
+
+        Phase phase = phaseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+
+        phase.setEtatRealisation(true);
+
+        phase = phaseRepository.save(phase);
+
+        return convertToDTO(phase);
+    }
+
+    public PhaseDTO facturer(Long id) {
+
+        Phase phase = phaseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+
+        phase.setEtatFacturation(true);
+
+        phase = phaseRepository.save(phase);
+
+        return convertToDTO(phase);
+    }
+
+    public PhaseDTO payer(Long id) {
+
+        Phase phase = phaseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+
+        phase.setEtatPaiement(true);
+
+        phase = phaseRepository.save(phase);
+
+        return convertToDTO(phase);
+    }
+
     private PhaseDTO convertToDTO(Phase phase) {
 
         PhaseDTO dto = new PhaseDTO();
@@ -113,6 +177,7 @@ public class PhaseService {
         dto.dateDebut = phase.getDateDebut();
         dto.dateFin = phase.getDateFin();
         dto.montant = phase.getMontant();
+
         dto.etatRealisation = phase.isEtatRealisation();
         dto.etatFacturation = phase.isEtatFacturation();
         dto.etatPaiement = phase.isEtatPaiement();
