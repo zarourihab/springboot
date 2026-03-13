@@ -1,6 +1,6 @@
 package com.example.suiviprojet.service;
 
-import com.example.suiviprojet.dto.LivrableDto;
+import com.example.suiviprojet.dto.LivrableDTO;
 import com.example.suiviprojet.entities.Livrable;
 import com.example.suiviprojet.entities.Phase;
 import com.example.suiviprojet.repositories.LivrableRepository;
@@ -20,7 +20,7 @@ public class LivrableService {
     private PhaseRepository phaseRepository;
 
     // 1️⃣ Ajouter un livrable à une phase
-    public Livrable addLivrable(Long phaseId, LivrableDto dto) {
+    public Livrable addLivrable(Long phaseId, LivrableDTO dto) {
 
         Phase phase = phaseRepository.findById(phaseId)
                 .orElseThrow(() ->
@@ -59,7 +59,7 @@ public class LivrableService {
     }
 
     // 4️⃣ Mettre à jour un livrable
-    public Livrable updateLivrable(Long id, LivrableDto dto) {
+    public Livrable updateLivrable(Long id, LivrableDTO dto) {
 
         Livrable livrable = getLivrableById(id);
 

@@ -1,6 +1,6 @@
 package com.example.suiviprojet.controller;
 
-import com.example.suiviprojet.dto.LivrableDto;
+import com.example.suiviprojet.dto.LivrableDTO;
 import com.example.suiviprojet.entities.Livrable;
 import com.example.suiviprojet.service.LivrableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class LivrableController {
 
     // POST /api/phases/{phaseId}/livrables
     @PostMapping("/phases/{phaseId}/livrables")
-    public Livrable add(@PathVariable Long phaseId, @RequestBody LivrableDto dto) {
+    public Livrable add(@PathVariable Long phaseId, @RequestBody LivrableDTO dto) {
         return livrableService.addLivrable(phaseId, dto);
     }
 
@@ -35,7 +35,7 @@ public class LivrableController {
 
     // PUT /api/livrables/{id}
     @PutMapping("/livrables/{id}")
-    public Livrable update(@PathVariable Long id, @RequestBody LivrableDto dto) {
+    public Livrable update(@PathVariable Long id, @RequestBody LivrableDTO dto) {
         return livrableService.updateLivrable(id, dto);
     }
 

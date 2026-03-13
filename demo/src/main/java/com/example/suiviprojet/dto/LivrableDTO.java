@@ -1,6 +1,6 @@
 package com.example.suiviprojet.dto;
 
-public class LivrableDto {
+public class LivrableDTO {
     private String code;
     private String libelle;
     private String description;
