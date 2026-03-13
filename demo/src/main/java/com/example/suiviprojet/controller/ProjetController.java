@@ -1,9 +1,8 @@
 package com.example.suiviprojet.controller;
 
 import com.example.suiviprojet.dto.ProjetDTO;
-import com.example.suiviprojet.entities.Projet;
 import com.example.suiviprojet.service.ProjetService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,27 +13,31 @@ import java.util.Map;
 @RequestMapping("/api/projets")
 public class ProjetController {
 
-    @Autowired
-    private ProjetService projetService;
+    private final ProjetService projetService;
+
+    public ProjetController(ProjetService projetService) {
+        this.projetService = projetService;
+    }
 
     @PostMapping
-    public ResponseEntity<Projet> create(@RequestBody ProjetDTO dto) {
+    public ResponseEntity<ProjetDTO> create(@Valid @RequestBody ProjetDTO dto) {
         return ResponseEntity.ok(projetService.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Projet> update(@PathVariable Long id, @RequestBody ProjetDTO dto) {
+    public ResponseEntity<ProjetDTO> update(@PathVariable Long id,
+                                            @Valid @RequestBody ProjetDTO dto) {
         return ResponseEntity.ok(projetService.update(id, dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Projet> getById(@PathVariable Long id) {
+    public ResponseEntity<ProjetDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(projetService.findById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Projet>> getAll() {
-        return ResponseEntity.ok(projetService.findAll());
+    public ResponseEntity<List<ProjetDTO>> getAll(@RequestParam(required = false) String q) {
+        return ResponseEntity.ok(projetService.findAll(q));
     }
 
     @DeleteMapping("/{id}")
