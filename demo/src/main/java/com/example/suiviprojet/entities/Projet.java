@@ -1,4 +1,3 @@
-// Projet.java
 package com.example.suiviprojet.entities;
 
 import jakarta.persistence.*;
@@ -13,6 +12,7 @@ public class Projet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String code;
     private String nom;
     private String description;
@@ -24,13 +24,20 @@ public class Projet {
     @JoinColumn(name = "organisme_id")
     private Organisme organisme;
 
+    @ManyToOne
+    @JoinColumn(name = "chef_projet_id")
+    private Employe chefProjet;
+
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Phase> phases;
 
     @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents;
 
+    // Constructeur vide requis par JPA
     public Projet() {}
+
+    // --- Getters et Setters ---
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -55,6 +62,9 @@ public class Projet {
 
     public Organisme getOrganisme() { return organisme; }
     public void setOrganisme(Organisme organisme) { this.organisme = organisme; }
+
+    public Employe getChefProjet() { return chefProjet; }
+    public void setChefProjet(Employe chefProjet) { this.chefProjet = chefProjet; }
 
     public List<Phase> getPhases() { return phases; }
     public void setPhases(List<Phase> phases) { this.phases = phases; }
