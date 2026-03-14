@@ -8,7 +8,7 @@ Initialisation, BDD, Entités JPA, Repositories
 
 ![Image 1](screens_rihab/Capture%20d'écran%202026-03-12%20152450.png?raw=true)
 
-![Image 2](screens_rihab/Capture%20d'écran%202026-03-12%20152648.png?raw=true)
+
 
 Phase 4 — Gestion des organismes
 
