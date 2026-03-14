@@ -22,7 +22,7 @@ public class DocumentService {
         this.projetRepository = projetRepository;
     }
 
-    // Créer un document pour un projet
+
     public DocumentDTO create(Long projetId, DocumentDTO dto) {
 
         Projet projet = projetRepository.findById(projetId)
@@ -41,7 +41,7 @@ public class DocumentService {
         return convertToDTO(document);
     }
 
-    // Trouver un document par id
+
     public DocumentDTO findById(Long id) {
 
         Document document = documentRepository.findById(id)
@@ -50,7 +50,7 @@ public class DocumentService {
         return convertToDTO(document);
     }
 
-    // Documents d'un projet
+
     public List<DocumentDTO> findByProjet(Long projetId) {
 
         return documentRepository.findByProjetId(projetId)
@@ -59,7 +59,7 @@ public class DocumentService {
                 .collect(Collectors.toList());
     }
 
-    // Modifier document
+
     public DocumentDTO update(Long id, DocumentDTO dto) {
 
         Document document = documentRepository.findById(id)
@@ -75,12 +75,12 @@ public class DocumentService {
         return convertToDTO(document);
     }
 
-    // Supprimer document
+
     public void delete(Long id) {
         documentRepository.deleteById(id);
     }
 
-    // Conversion Entity → DTO
+
     private DocumentDTO convertToDTO(Document doc) {
 
         DocumentDTO dto = new DocumentDTO();

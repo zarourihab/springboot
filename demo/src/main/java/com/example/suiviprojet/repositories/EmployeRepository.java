@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeRepository extends JpaRepository<Employe, Long> {
-    // Méthodes métier demandées
     Optional<Employe> findByMatricule(String matricule);
     Optional<Employe> findByLogin(String login);
     Optional<Employe> findByEmail(String email);

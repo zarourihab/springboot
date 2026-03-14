@@ -28,7 +28,7 @@ public class Livrable {
 
     public Livrable() {}
 
-    // Constructeur utile pour vos tests ou services
+
     public Livrable(String code, String libelle, String description, String chemin, Phase phase) {
         this.code = code;
         this.libelle = libelle;
@@ -37,7 +37,7 @@ public class Livrable {
         this.phase = phase;
     }
 
-    // Getters et Setters...
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getCode() { return code; }

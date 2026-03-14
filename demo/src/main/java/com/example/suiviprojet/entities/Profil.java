@@ -12,7 +12,7 @@ public class Profil {
     private String code;
     private String libelle;
 
-    // Relation : Un profil peut être associé à plusieurs employés (1 vers *)
+
     @OneToMany(mappedBy = "profil")
     private List<Employe> employes;
 
