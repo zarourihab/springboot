@@ -8,6 +8,7 @@ import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.EmployeRepository;
 import com.example.suiviprojet.repositories.ProfilRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,12 +16,15 @@ import java.util.stream.Collectors;
 @Service
 public class EmployeService {
 
+    private final PasswordEncoder passwordEncoder;
     private final EmployeRepository employeRepository;
     private final ProfilRepository profilRepository;
 
-    public EmployeService(EmployeRepository employeRepository, ProfilRepository profilRepository) {
+    public EmployeService(PasswordEncoder passwordEncoder, EmployeRepository employeRepository, ProfilRepository profilRepository) {
+        this.passwordEncoder = passwordEncoder;
         this.employeRepository = employeRepository;
         this.profilRepository = profilRepository;
+
     }
 
     public EmployeDTO create(EmployeDTO dto) {
@@ -104,7 +108,7 @@ public class EmployeService {
         employe.setLogin(dto.login);
 
         if (dto.password != null && !dto.password.isBlank()) {
-            employe.setPassword(dto.password);
+            employe.setPassword(passwordEncoder.encode(dto.password));
         }
 
         if (dto.profilId != null) {
