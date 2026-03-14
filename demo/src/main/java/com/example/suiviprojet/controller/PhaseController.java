@@ -20,7 +20,7 @@ public class PhaseController {
 
     @PostMapping("/projets/{projetId}/phases")
     public PhaseDTO create(@PathVariable Long projetId,
-                           @Valid@RequestBody PhaseDTO dto) {
+                           @Valid @RequestBody PhaseDTO dto) {
 
         dto.projetId = projetId;
         return phaseService.create(dto);

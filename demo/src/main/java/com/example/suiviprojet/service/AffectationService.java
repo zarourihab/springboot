@@ -5,6 +5,7 @@ import com.example.suiviprojet.entities.Affectation;
 import com.example.suiviprojet.entities.AffectationId;
 import com.example.suiviprojet.entities.Employe;
 import com.example.suiviprojet.entities.Phase;
+import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.AffectationRepository;
 import com.example.suiviprojet.repositories.EmployeRepository;
 import com.example.suiviprojet.repositories.PhaseRepository;
@@ -30,13 +31,13 @@ public class AffectationService {
 
     public AffectationDTO create(Long phaseId, Long employeId, AffectationDTO dto) {
         Employe employe = employeRepository.findById(employeId)
-                .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employé non trouvé"));
 
         Phase phase = phaseRepository.findById(phaseId)
-                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phase non trouvée"));
 
         if (affectationRepository.existsByEmployeIdAndPhaseId(employeId, phaseId)) {
-            throw new RuntimeException("Cette affectation existe déjà");
+            throw new ResourceNotFoundException("Cette affectation existe déjà");
         }
 
         AffectationId id = new AffectationId();
@@ -55,7 +56,7 @@ public class AffectationService {
 
     public List<AffectationDTO> findByPhase(Long phaseId) {
         Phase phase = phaseRepository.findById(phaseId)
-                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phase non trouvée"));
 
         return affectationRepository.findByPhaseId(phase.getId())
                 .stream()
@@ -69,7 +70,7 @@ public class AffectationService {
         id.setPhaseId(phaseId);
 
         Affectation affectation = affectationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Affectation non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Affectation non trouvée"));
 
         return mapEntityToDto(affectation);
     }
@@ -80,7 +81,7 @@ public class AffectationService {
         id.setPhaseId(phaseId);
 
         Affectation affectation = affectationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Affectation non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Affectation non trouvée"));
 
         affectation.setRole(dto.getRole());
         affectation = affectationRepository.save(affectation);
@@ -94,14 +95,14 @@ public class AffectationService {
         id.setPhaseId(phaseId);
 
         Affectation affectation = affectationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Affectation non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Affectation non trouvée"));
 
         affectationRepository.delete(affectation);
     }
 
     public List<AffectationDTO> findByEmploye(Long employeId) {
         Employe employe = employeRepository.findById(employeId)
-                .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employé non trouvé"));
 
         return affectationRepository.findByEmployeId(employe.getId())
                 .stream()

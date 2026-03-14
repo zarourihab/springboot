@@ -2,6 +2,7 @@ package com.example.suiviprojet.service;
 
 import com.example.suiviprojet.dto.OrganismeDTO;
 import com.example.suiviprojet.entities.Organisme;
+import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.OrganismeRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -21,7 +22,7 @@ public class OrganismeService {
 
 
     public OrganismeDTO findById(Long id) {
-        Organisme o = repo.findById(id).orElseThrow(() -> new RuntimeException("Non trouvé"));
+        Organisme o = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Non trouvé"));
         OrganismeDTO dto = new OrganismeDTO();
         dto.setId(o.getId()); dto.setNom(o.getNom()); dto.setCode(o.getCode()); dto.setContact(o.getNomContact());
         return dto;
@@ -29,7 +30,7 @@ public class OrganismeService {
 
 
     public OrganismeDTO update(Long id, OrganismeDTO dto) {
-        Organisme o = repo.findById(id).orElseThrow(() -> new RuntimeException("Non trouvé"));
+        Organisme o = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Non trouvé"));
         o.setNom(dto.getNom()); o.setCode(dto.getCode()); o.setNomContact(dto.getContact());
         repo.save(o);
         return dto;

@@ -3,6 +3,7 @@ package com.example.suiviprojet.service;
 import com.example.suiviprojet.dto.LivrableDTO;
 import com.example.suiviprojet.entities.Livrable;
 import com.example.suiviprojet.entities.Phase;
+import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.LivrableRepository;
 import com.example.suiviprojet.repositories.PhaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class LivrableService {
 
         Phase phase = phaseRepository.findById(phaseId)
                 .orElseThrow(() ->
-                        new RuntimeException("Phase introuvable avec l'ID : " + phaseId)
+                        new ResourceNotFoundException("Phase introuvable avec l'ID : " + phaseId)
                 );
 
         Livrable livrable = new Livrable();
@@ -43,7 +44,7 @@ public class LivrableService {
     public List<Livrable> getLivrablesByPhase(Long phaseId) {
 
         if (!phaseRepository.existsById(phaseId)) {
-            throw new RuntimeException("Phase introuvable avec l'ID : " + phaseId);
+            throw new ResourceNotFoundException("Phase introuvable avec l'ID : " + phaseId);
         }
 
         return livrableRepository.findByPhaseId(phaseId);
@@ -54,7 +55,7 @@ public class LivrableService {
 
         return livrableRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Livrable non trouvé avec l'ID : " + id)
+                        new ResourceNotFoundException("Livrable non trouvé avec l'ID : " + id)
                 );
     }
 
@@ -74,7 +75,7 @@ public class LivrableService {
     public void deleteLivrable(Long id) {
 
         if (!livrableRepository.existsById(id)) {
-            throw new RuntimeException("Impossible de supprimer : Livrable introuvable");
+            throw new ResourceNotFoundException("Impossible de supprimer : Livrable introuvable");
         }
 
         livrableRepository.deleteById(id);

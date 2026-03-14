@@ -6,6 +6,8 @@ public class OrganismeDTO {
     private long id;
     @NotBlank(message = " Le code est obligatoire")
     private String code;
+
+    @NotBlank(message = "Le nom est obligatoire")
     private String nom;
     private String adresse;
     private String contact;

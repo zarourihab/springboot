@@ -49,7 +49,7 @@ public class ProjetService {
 
     public ProjetDTO update(Long id, ProjetDTO dto) {
         Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Projet introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Projet introuvable"));
 
         validateProjet(dto);
 
@@ -67,7 +67,7 @@ public class ProjetService {
 
     public void delete(Long id) {
         Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Projet introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Projet introuvable"));
 
         if (projet.getPhases() != null && !projet.getPhases().isEmpty()) {
             throw new BusinessException("Impossible de supprimer : le projet contient des phases");
@@ -78,7 +78,7 @@ public class ProjetService {
 
     public ProjetDTO findById(Long id) {
         Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Projet introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Projet introuvable"));
         return mapEntityToDto(projet);
     }
 
@@ -98,7 +98,7 @@ public class ProjetService {
 
     public Map<String, Object> getResume(Long id) {
         Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Projet introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Projet introuvable"));
 
         Map<String, Object> resume = new HashMap<>();
         resume.put("id", projet.getId());

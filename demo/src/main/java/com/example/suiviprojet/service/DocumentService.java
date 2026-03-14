@@ -3,6 +3,7 @@ package com.example.suiviprojet.service;
 import com.example.suiviprojet.dto.DocumentDTO;
 import com.example.suiviprojet.entities.Document;
 import com.example.suiviprojet.entities.Projet;
+import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.DocumentRepository;
 import com.example.suiviprojet.repositories.ProjetRepository;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class DocumentService {
     public DocumentDTO create(Long projetId, DocumentDTO dto) {
 
         Projet projet = projetRepository.findById(projetId)
-                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Projet introuvable"));
 
         Document document = new Document();
 
@@ -45,7 +46,7 @@ public class DocumentService {
     public DocumentDTO findById(Long id) {
 
         Document document = documentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Document introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Document introuvable"));
 
         return convertToDTO(document);
     }
@@ -63,7 +64,7 @@ public class DocumentService {
     public DocumentDTO update(Long id, DocumentDTO dto) {
 
         Document document = documentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Document introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Document introuvable"));
 
         document.setCode(dto.code);
         document.setLibelle(dto.libelle);
