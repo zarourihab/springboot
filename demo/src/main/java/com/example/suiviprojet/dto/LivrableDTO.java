@@ -1,7 +1,13 @@
 package com.example.suiviprojet.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class LivrableDTO {
+
+    @NotBlank(message = "Le code est obligatoire")
     private String code;
+
+    @NotBlank(message = "Le libellé est obligatoire")
     private String libelle;
     private String description;
     private String chemin;

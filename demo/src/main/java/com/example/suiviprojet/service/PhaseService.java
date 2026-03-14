@@ -3,6 +3,8 @@ package com.example.suiviprojet.service;
 import com.example.suiviprojet.dto.PhaseDTO;
 import com.example.suiviprojet.entities.Phase;
 import com.example.suiviprojet.entities.Projet;
+import com.example.suiviprojet.exceptions.BusinessException;
+import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.PhaseRepository;
 import com.example.suiviprojet.repositories.ProjetRepository;
 import org.springframework.stereotype.Service;
@@ -25,23 +27,23 @@ public class PhaseService {
     public PhaseDTO create(PhaseDTO dto) {
 
         Projet projet = projetRepository.findById(dto.projetId)
-                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Projet introuvable"));
 
         if (dto.dateDebut == null || dto.dateFin == null) {
-            throw new RuntimeException("Les dates de la phase sont obligatoires");
+            throw new BusinessException("Les dates de la phase sont obligatoires");
         }
 
         if (projet.getDateDebut() == null || projet.getDateFin() == null) {
-            throw new RuntimeException("Les dates du projet sont manquantes");
+            throw new BusinessException("Les dates du projet sont manquantes");
         }
 
         if (dto.dateDebut.isAfter(dto.dateFin)) {
-            throw new RuntimeException("La date de début doit être avant ou égale à la date de fin");
+            throw new BusinessException("La date de début doit être avant ou égale à la date de fin");
         }
 
         if (dto.dateDebut.isBefore(projet.getDateDebut())
                 || dto.dateFin.isAfter(projet.getDateFin())) {
-            throw new RuntimeException("Dates de phase hors intervalle du projet");
+            throw new BusinessException("Dates de phase hors intervalle du projet");
         }
 
         Phase phase = new Phase();
@@ -67,7 +69,7 @@ public class PhaseService {
     public PhaseDTO findById(Long id) {
 
         Phase phase = phaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phase non trouvée"));
 
         return convertToDTO(phase);
     }
@@ -91,26 +93,26 @@ public class PhaseService {
     public PhaseDTO update(Long id, PhaseDTO dto) {
 
         Phase phase = phaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phase non trouvée"));
 
         Projet projet = phase.getProjet();
 
         if (dto.dateDebut == null || dto.dateFin == null) {
-            throw new RuntimeException("Les dates de la phase sont obligatoires");
+            throw new BusinessException("Les dates de la phase sont obligatoires");
         }
 
         if (dto.dateDebut.isAfter(dto.dateFin)) {
-            throw new RuntimeException("La date de début doit être avant ou égale à la date de fin");
+            throw new BusinessException("La date de début doit être avant ou égale à la date de fin");
         }
 
         if (projet != null) {
             if (projet.getDateDebut() == null || projet.getDateFin() == null) {
-                throw new RuntimeException("Les dates du projet sont manquantes");
+                throw new BusinessException("Les dates du projet sont manquantes");
             }
 
             if (dto.dateDebut.isBefore(projet.getDateDebut())
                     || dto.dateFin.isAfter(projet.getDateFin())) {
-                throw new RuntimeException("Dates de phase hors intervalle du projet");
+                throw new BusinessException("Dates de phase hors intervalle du projet");
             }
         }
 
@@ -133,7 +135,7 @@ public class PhaseService {
     public PhaseDTO realiser(Long id) {
 
         Phase phase = phaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phase non trouvée"));
 
         phase.setEtatRealisation(true);
 
@@ -145,7 +147,7 @@ public class PhaseService {
     public PhaseDTO facturer(Long id) {
 
         Phase phase = phaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phase non trouvée"));
 
         phase.setEtatFacturation(true);
 
@@ -157,7 +159,7 @@ public class PhaseService {
     public PhaseDTO payer(Long id) {
 
         Phase phase = phaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phase non trouvée"));
 
         phase.setEtatPaiement(true);
 

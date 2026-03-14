@@ -3,6 +3,7 @@ package com.example.suiviprojet.controller;
 import com.example.suiviprojet.dto.LivrableDTO;
 import com.example.suiviprojet.entities.Livrable;
 import com.example.suiviprojet.service.LivrableService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class LivrableController {
 
     // POST /api/phases/{phaseId}/livrables
     @PostMapping("/phases/{phaseId}/livrables")
-    public Livrable add(@PathVariable Long phaseId, @RequestBody LivrableDTO dto) {
+    public Livrable add(@PathVariable Long phaseId, @Valid @RequestBody LivrableDTO dto) {
         return livrableService.addLivrable(phaseId, dto);
     }
 
@@ -35,7 +36,7 @@ public class LivrableController {
 
     // PUT /api/livrables/{id}
     @PutMapping("/livrables/{id}")
-    public Livrable update(@PathVariable Long id, @RequestBody LivrableDTO dto) {
+    public Livrable update(@PathVariable Long id, @Valid @RequestBody LivrableDTO dto) {
         return livrableService.updateLivrable(id, dto);
     }
 

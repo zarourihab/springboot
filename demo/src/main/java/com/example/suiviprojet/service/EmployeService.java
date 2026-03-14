@@ -3,6 +3,8 @@ package com.example.suiviprojet.service;
 import com.example.suiviprojet.dto.EmployeDTO;
 import com.example.suiviprojet.entities.Employe;
 import com.example.suiviprojet.entities.Profil;
+import com.example.suiviprojet.exceptions.BusinessException;
+import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.EmployeRepository;
 import com.example.suiviprojet.repositories.ProfilRepository;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,7 @@ public class EmployeService {
 
     public EmployeDTO findById(Long id) {
         Employe employe = employeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employé non trouvé"));
         return mapEntityToDto(employe);
     }
 
@@ -56,7 +58,7 @@ public class EmployeService {
 
     public EmployeDTO update(Long id, EmployeDTO dto) {
         Employe employe = employeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employé non trouvé"));
 
         verifierUnicite(dto, id);
         mapDtoToEntity(dto, employe);
@@ -67,27 +69,27 @@ public class EmployeService {
 
     public void delete(Long id) {
         Employe employe = employeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employé non trouvé"));
         employeRepository.deleteById(id);
     }
 
     private void verifierUnicite(EmployeDTO dto, Long idEnCours) {
         employeRepository.findByMatricule(dto.matricule).ifPresent(e -> {
             if (idEnCours == null || !e.getId().equals(idEnCours)) {
-                throw new RuntimeException("Matricule déjà utilisé");
+                throw new BusinessException("Matricule déjà utilisé");
             }
         });
 
         employeRepository.findByLogin(dto.login).ifPresent(e -> {
             if (idEnCours == null || !e.getId().equals(idEnCours)) {
-                throw new RuntimeException("Login déjà utilisé");
+                throw new BusinessException("Login déjà utilisé");
             }
         });
 
         if (dto.email != null && !dto.email.isBlank()) {
             employeRepository.findByEmail(dto.email).ifPresent(e -> {
                 if (idEnCours == null || !e.getId().equals(idEnCours)) {
-                    throw new RuntimeException("Email déjà utilisé");
+                    throw new BusinessException("Email déjà utilisé");
                 }
             });
         }
@@ -107,7 +109,7 @@ public class EmployeService {
 
         if (dto.profilId != null) {
             Profil profil = profilRepository.findById(dto.profilId)
-                    .orElseThrow(() -> new RuntimeException("Profil non trouvé"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Profil non trouvé"));
             employe.setProfil(profil);
         } else {
             employe.setProfil(null);

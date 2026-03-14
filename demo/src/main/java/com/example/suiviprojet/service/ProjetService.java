@@ -5,6 +5,8 @@ import com.example.suiviprojet.entities.Employe;
 import com.example.suiviprojet.entities.Organisme;
 import com.example.suiviprojet.entities.Phase;
 import com.example.suiviprojet.entities.Projet;
+import com.example.suiviprojet.exceptions.BusinessException;
+import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.EmployeRepository;
 import com.example.suiviprojet.repositories.OrganismeRepository;
 import com.example.suiviprojet.repositories.ProjetRepository;
@@ -35,7 +37,7 @@ public class ProjetService {
         validateProjet(dto);
 
         if (projetRepository.existsByCode(dto.getCode())) {
-            throw new RuntimeException("Le code projet est déjà utilisé");
+            throw new BusinessException("Le code projet est déjà utilisé");
         }
 
         Projet projet = new Projet();
@@ -47,13 +49,13 @@ public class ProjetService {
 
     public ProjetDTO update(Long id, ProjetDTO dto) {
         Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+                .orElseThrow(() -> new BusinessException("Projet introuvable"));
 
         validateProjet(dto);
 
         projetRepository.findByCode(dto.getCode()).ifPresent(existingProjet -> {
             if (!existingProjet.getId().equals(id)) {
-                throw new RuntimeException("Le code projet est déjà utilisé");
+                throw new BusinessException("Le code projet est déjà utilisé");
             }
         });
 
@@ -65,10 +67,10 @@ public class ProjetService {
 
     public void delete(Long id) {
         Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+                .orElseThrow(() -> new BusinessException("Projet introuvable"));
 
         if (projet.getPhases() != null && !projet.getPhases().isEmpty()) {
-            throw new RuntimeException("Impossible de supprimer : le projet contient des phases");
+            throw new BusinessException("Impossible de supprimer : le projet contient des phases");
         }
 
         projetRepository.delete(projet);
@@ -76,7 +78,7 @@ public class ProjetService {
 
     public ProjetDTO findById(Long id) {
         Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+                .orElseThrow(() -> new BusinessException("Projet introuvable"));
         return mapEntityToDto(projet);
     }
 
@@ -96,7 +98,7 @@ public class ProjetService {
 
     public Map<String, Object> getResume(Long id) {
         Projet projet = projetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Projet introuvable"));
+                .orElseThrow(() -> new BusinessException("Projet introuvable"));
 
         Map<String, Object> resume = new HashMap<>();
         resume.put("id", projet.getId());
@@ -144,11 +146,11 @@ public class ProjetService {
     private void validateProjet(ProjetDTO dto) {
         if (dto.getDateDebut() != null && dto.getDateFin() != null
                 && dto.getDateDebut().isAfter(dto.getDateFin())) {
-            throw new RuntimeException("La date de début doit être avant ou égale à la date de fin");
+            throw new BusinessException("La date de début doit être avant ou égale à la date de fin");
         }
 
         if (dto.getMontant() != null && dto.getMontant() < 0) {
-            throw new RuntimeException("Le montant ne peut pas être négatif");
+            throw new BusinessException("Le montant ne peut pas être négatif");
         }
     }
 
@@ -161,10 +163,10 @@ public class ProjetService {
         projet.setMontant(dto.getMontant());
 
         Organisme organisme = organismeRepository.findById(dto.getOrganismeId())
-                .orElseThrow(() -> new RuntimeException("Organisme non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Organisme non trouvé"));
 
         Employe chefProjet = employeRepository.findById(dto.getChefProjetId())
-                .orElseThrow(() -> new RuntimeException("Chef de projet non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chef de projet non trouvé"));
 
         projet.setOrganisme(organisme);
         projet.setChefProjet(chefProjet);

@@ -3,6 +3,8 @@ package com.example.suiviprojet.service;
 import com.example.suiviprojet.dto.FactureDTO;
 import com.example.suiviprojet.entities.Facture;
 import com.example.suiviprojet.entities.Phase;
+import com.example.suiviprojet.exceptions.BusinessException;
+import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.FactureRepository;
 import com.example.suiviprojet.repositories.PhaseRepository;
 import org.springframework.stereotype.Service;
@@ -23,14 +25,14 @@ public class FactureService {
 
     public FactureDTO create(Long phaseId, FactureDTO dto) {
         Phase phase = phaseRepository.findById(phaseId)
-                .orElseThrow(() -> new RuntimeException("Phase non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Phase non trouvée"));
 
         if (!Boolean.TRUE.equals(phase.isEtatRealisation())) {
-            throw new RuntimeException("Impossible de créer une facture pour une phase non réalisée");
+            throw new BusinessException("Impossible de créer une facture pour une phase non réalisée");
         }
 
         if (phase.getFacture() != null) {
-            throw new RuntimeException("Cette phase a déjà une facture");
+            throw new BusinessException("Cette phase a déjà une facture");
         }
 
         Facture facture = new Facture();
@@ -60,13 +62,13 @@ public class FactureService {
 
     public FactureDTO findById(Long id) {
         Facture facture = factureRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Facture non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Facture non trouvée"));
         return mapEntityToDto(facture);
     }
 
     public FactureDTO update(Long id, FactureDTO dto) {
         Facture facture = factureRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Facture non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Facture non trouvée"));
 
         facture.setDateFacture(dto.getDateFacture());
         facture.setPayee(dto.getPayee() != null ? dto.getPayee() : false);
@@ -85,7 +87,7 @@ public class FactureService {
 
     public void delete(Long id) {
         Facture facture = factureRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Facture non trouvée"));
+                .orElseThrow(() -> new ResourceNotFoundException("Facture non trouvée"));
 
         Phase phase = facture.getPhase();
         if (phase != null) {

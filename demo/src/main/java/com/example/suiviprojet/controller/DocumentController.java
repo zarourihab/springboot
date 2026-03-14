@@ -2,6 +2,7 @@ package com.example.suiviprojet.controller;
 
 import com.example.suiviprojet.dto.DocumentDTO;
 import com.example.suiviprojet.service.DocumentService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class DocumentController {
 
     @PostMapping("/projets/{projetId}/documents")
     public DocumentDTO create(@PathVariable Long projetId,
-                              @RequestBody DocumentDTO dto) {
+                              @Valid @RequestBody DocumentDTO dto) {
         return documentService.create(projetId, dto);
     }
 
@@ -38,7 +39,7 @@ public class DocumentController {
 
     @PutMapping("/documents/{id}")
     public DocumentDTO update(@PathVariable Long id,
-                              @RequestBody DocumentDTO dto) {
+                              @Valid @RequestBody DocumentDTO dto) {
         return documentService.update(id, dto);
     }
 

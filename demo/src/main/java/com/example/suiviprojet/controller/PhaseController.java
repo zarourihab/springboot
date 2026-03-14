@@ -41,7 +41,7 @@ public class PhaseController {
     // Modifier
     @PutMapping("/phases/{id}")
     public PhaseDTO update(@PathVariable Long id,
-                           @RequestBody PhaseDTO dto) {
+                          @Valid @RequestBody PhaseDTO dto) {
         return phaseService.update(id, dto);
     }
 
