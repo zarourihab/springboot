@@ -1,0 +1,32 @@
+*   [33m7ff826e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m phase 13 pas encours terminé
+[31m|[m[32m\[m  
+* [32m|[m [33m8694846[m phase 13
+[32m|[m [32m|[m * [33m904224d[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Correction des entités Facture/Document et harmonisation des packages
+[32m|[m [32m|[m[32m/[m  
+[32m|[m * [33mda8288e[m Correction des packages, nettoyage des fichiers inutiles et structure DTO/Mapper
+[32m|[m * [33me321d85[m Mes modifications locales
+[32m|[m[32m/[m  
+* [33mdd8c930[m phase 12 reporting dto service controller
+* [33mb7b7638[m ajout module facture etape 11
+*   [33m4845ffd[m Merge branch 'main' of https://github.com/zarourihab/springboot # Please enter a commit message to explain why this merge is necessary, # especially if it merges an updated upstream into a topic branch. # # Lines starting with '#' will be ignored, and an empty message aborts # the commit.
+[34m|[m[35m\[m  
+[34m|[m *   [33md8c5ca6[m phase 9 livrable  service controller
+[34m|[m [36m|[m[1;31m\[m  
+[34m|[m [36m|[m * [33m3a5e465[m ajout module affectation etape 8
+[34m|[m [36m|[m * [33m2360288[m corriger module employe : dto service controller crud
+[34m|[m * [1;31m|[m [33m9295d44[m phase 9 liverable  service controller
+[34m|[m [1;31m|[m[1;31m/[m  
+* [1;31m/[m [33mf78bd16[m phase 10 document dto service controller
+[1;31m|[m[1;31m/[m  
+*   [33m3c709e4[m phase 6 projets service controller
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [33m03c91fc[m ajout module employe : dto service controller crud
+[1;32m|[m * [33mbc2fba6[m phase 7 phase dto service controller
+* [1;33m|[m [33m37de187[m phase 5 employe service controller
+[1;33m|[m[1;33m/[m  
+* [33m0f4e85d[m phase 5 employe service controller
+* [33m14477c5[m Add .gitignore to ignore IDE files
+* [33md4a0808[m Remove .idea folder from repository
+* [33m01c2cf0[m first commit
+* [33m94a68f7[m Remove .idea folder from repository
+* [33mdd71436[m first commit
