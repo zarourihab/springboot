@@ -14,7 +14,7 @@ public class DataInitializer {
         return args -> {
             System.out.println("--- ÉTAPE 3 : TEST DÉMARRÉ ---");
 
-            // 1. Vérifier le nombre de projets existants
+
             long count = projetRepo.count();
             System.out.println("Nombre de projets en base : " + count);
 

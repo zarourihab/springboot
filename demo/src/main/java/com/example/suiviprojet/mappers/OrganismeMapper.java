@@ -11,7 +11,7 @@ public class OrganismeMapper {
         organisme.setNom(dto.getNom());
         organisme.setAdresse(dto.getAdresse());
         organisme.setEmailContact(dto.getEmailContact());
-        // ajoute les autres champs
+
         return organisme;
     }
 
