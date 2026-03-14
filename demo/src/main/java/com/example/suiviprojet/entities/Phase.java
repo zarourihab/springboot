@@ -1,4 +1,3 @@
-// Phase.java
 package com.example.suiviprojet.entities;
 
 import jakarta.persistence.*;
@@ -39,7 +38,7 @@ public class Phase {
 
     public Phase() {}
 
-    // Getters et Setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -13,9 +13,9 @@ public class OrganismeService {
 
     public OrganismeDTO create(OrganismeDTO dto) {
         Organisme o = new Organisme();
-        o.setNom(dto.nom); o.setCode(dto.code); o.setNomContact(dto.contact);
+        o.setNom(dto.getNom()); o.setCode(dto.getCode()); o.setNomContact(dto.getContact());
         o = repo.save(o);
-        dto.id = o.getId();
+        dto.setId(o.getId());
         return dto;
     }
 
@@ -23,14 +23,14 @@ public class OrganismeService {
     public OrganismeDTO findById(Long id) {
         Organisme o = repo.findById(id).orElseThrow(() -> new RuntimeException("Non trouvé"));
         OrganismeDTO dto = new OrganismeDTO();
-        dto.id = o.getId(); dto.nom = o.getNom(); dto.code = o.getCode(); dto.contact = o.getNomContact();
+        dto.setId(o.getId()); dto.setNom(o.getNom()); dto.setCode(o.getCode()); dto.setContact(o.getNomContact());
         return dto;
     }
 
 
     public OrganismeDTO update(Long id, OrganismeDTO dto) {
         Organisme o = repo.findById(id).orElseThrow(() -> new RuntimeException("Non trouvé"));
-        o.setNom(dto.nom); o.setCode(dto.code); o.setNomContact(dto.contact);
+        o.setNom(dto.getNom()); o.setCode(dto.getCode()); o.setNomContact(dto.getContact());
         repo.save(o);
         return dto;
     }

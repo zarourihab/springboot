@@ -1,4 +1,4 @@
-// AffectationId.java
+
 package com.example.suiviprojet.entities;
 
 import jakarta.persistence.Embeddable;
@@ -17,7 +17,7 @@ public class AffectationId implements Serializable {
         this.phaseId = phaseId;
     }
 
-    // Getters et Setters
+
     public Long getEmployeId() {
         return employeId;
     }

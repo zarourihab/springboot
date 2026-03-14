@@ -1,4 +1,4 @@
-// Affectation.java
+
 package com.example.suiviprojet.entities;
 
 import jakarta.persistence.*;
@@ -32,7 +32,7 @@ public class Affectation {
         this.id = new AffectationId(employe.getId(), phase.getId());
     }
 
-    // Getters et Setters
+
     public AffectationId getId() {
         return id;
     }

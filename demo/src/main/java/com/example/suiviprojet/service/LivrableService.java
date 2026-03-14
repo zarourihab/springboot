@@ -19,7 +19,7 @@ public class LivrableService {
     @Autowired
     private PhaseRepository phaseRepository;
 
-    // 1️⃣ Ajouter un livrable à une phase
+
     public Livrable addLivrable(Long phaseId, LivrableDTO dto) {
 
         Phase phase = phaseRepository.findById(phaseId)
@@ -39,7 +39,7 @@ public class LivrableService {
         return livrableRepository.save(livrable);
     }
 
-    // 2️⃣ Récupérer les livrables d'une phase
+
     public List<Livrable> getLivrablesByPhase(Long phaseId) {
 
         if (!phaseRepository.existsById(phaseId)) {
@@ -49,7 +49,7 @@ public class LivrableService {
         return livrableRepository.findByPhaseId(phaseId);
     }
 
-    // 3️⃣ Récupérer un livrable par ID
+
     public Livrable getLivrableById(Long id) {
 
         return livrableRepository.findById(id)
@@ -58,7 +58,7 @@ public class LivrableService {
                 );
     }
 
-    // 4️⃣ Mettre à jour un livrable
+
     public Livrable updateLivrable(Long id, LivrableDTO dto) {
 
         Livrable livrable = getLivrableById(id);
@@ -70,7 +70,7 @@ public class LivrableService {
         return livrableRepository.save(livrable);
     }
 
-    // 5️⃣ Supprimer un livrable
+
     public void deleteLivrable(Long id) {
 
         if (!livrableRepository.existsById(id)) {
