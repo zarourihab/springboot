@@ -53,3 +53,18 @@ phase5
 
 ## - Phase 13 - gestion des exceptions
 ![](screens_saadia/exception.jpeg)
+
+### test Swagger
+![](screens_saadia/swagger%20(1).jpeg)
+
+---
+
+![](screens_saadia/swagger%20(2).jpeg)
+
+---
+
+![](screens_saadia/swagger%20(3).jpeg)
+
+---
+
+![](screens_saadia/swagger%20(4).jpeg)
