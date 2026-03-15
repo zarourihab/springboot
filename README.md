@@ -34,6 +34,15 @@ phase5
 
 ---
 
+
+## - Phase 7 — Gestion des phases 
+![img](screens_fadwa/post_ph7.jpg)
+
+![img](screens_fadwa/get_ph7.jpg)
+
+
+---
+
 ## - Phase 8 Gestons des affectations
 ![](screens_saadia/post_affectation.jpeg)
 ![](screens_saadia/get_affectation.jpeg)
@@ -44,6 +53,18 @@ phase5
 ![Image 12](screens_rihab/Capture%20d'écran%202026-03-13%20173127.png?raw=true)
 
 ---
+## - Phase 10 — Gestion des documents projet 
+![img](screens_fadwa/post_ph10.jpg)
+
+![img](screens_fadwa/get_ph10.jpg)
+
+![img](screens_fadwa/get_download_ph10.jpg)
+
+![img](screens_fadwa/get_download3_ph10.jpg)
+
+
+
+---
 
 ## - Phase 11 - Gestion des factures
 
@@ -51,8 +72,20 @@ phase5
 
 ---
 
+## - Phase 12 — Reporting et recherches métier 
+
+![img](screens_fadwa/get_ph12.jpg)
+
+![img](screens_fadwa/get_paye.jpg)
+
+![img](screens_fadwa/get_nonpaye_ph12.jpg)
+
+
+---
+
 ## - Phase 13 - gestion des exceptions
 ![](screens_saadia/exception.jpeg)
+
 
 ### test Swagger
 ![](screens_saadia/swagger%20(1).jpeg)
@@ -68,3 +101,15 @@ phase5
 ---
 
 ![](screens_saadia/swagger%20(4).jpeg)
+
+---
+
+## - Phase 14 — Authentification + rôles 
+![img](screens_fadwa/GET%20LOGIN_ph14.jpg)
+
+![img](screens_fadwa/me_ph14.jpg)
+
+
+ 
+ 
+
