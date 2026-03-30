@@ -1,7 +1,7 @@
 package com.example.suiviprojet.controller;
 
-import com.example.suiviprojet.entities.Phase;
-import com.example.suiviprojet.entities.Projet;
+import com.example.suiviprojet.dto.PhaseDTO;
+import com.example.suiviprojet.dto.ProjetDTO;
 import com.example.suiviprojet.service.ReportingService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,27 +21,27 @@ public class ReportingController {
     }
 
     @GetMapping("/phases/terminees-non-facturees")
-    public List<Phase> getPhasesTermineesNonFacturees() {
+    public List<PhaseDTO> getPhasesTermineesNonFacturees() {
         return reportingService.getPhasesTermineesNonFacturees();
     }
 
     @GetMapping("/phases/facturees-non-payees")
-    public List<Phase> getPhasesFactureesNonPayees() {
+    public List<PhaseDTO> getPhasesFactureesNonPayees() {
         return reportingService.getPhasesFactureesNonPayees();
     }
 
     @GetMapping("/phases/payees")
-    public List<Phase> getPhasesPayees() {
+    public List<PhaseDTO> getPhasesPayees() {
         return reportingService.getPhasesPayees();
     }
 
     @GetMapping("/projets/en-cours")
-    public List<Projet> getProjetsEnCours() {
+    public List<ProjetDTO> getProjetsEnCours() {
         return reportingService.getProjetsEnCours();
     }
 
     @GetMapping("/projets/clotures")
-    public List<Projet> getProjetsClotures() {
+    public List<ProjetDTO> getProjetsClotures() {
         return reportingService.getProjetsClotures();
     }
 

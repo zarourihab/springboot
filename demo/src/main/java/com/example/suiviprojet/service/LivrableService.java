@@ -6,78 +6,80 @@ import com.example.suiviprojet.entities.Phase;
 import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.LivrableRepository;
 import com.example.suiviprojet.repositories.PhaseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LivrableService {
 
-    @Autowired
-    private LivrableRepository livrableRepository;
+    private final LivrableRepository livrableRepository;
+    private final PhaseRepository phaseRepository;
 
-    @Autowired
-    private PhaseRepository phaseRepository;
+    public LivrableService(LivrableRepository livrableRepository, PhaseRepository phaseRepository) {
+        this.livrableRepository = livrableRepository;
+        this.phaseRepository = phaseRepository;
+    }
 
-
-    public Livrable addLivrable(Long phaseId, LivrableDTO dto) {
-
+    public LivrableDTO addLivrable(Long phaseId, LivrableDTO dto) {
         Phase phase = phaseRepository.findById(phaseId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Phase introuvable avec l'ID : " + phaseId)
-                );
+                .orElseThrow(() -> new ResourceNotFoundException("Phase introuvable avec l'ID : " + phaseId));
 
         Livrable livrable = new Livrable();
-
         livrable.setCode(dto.getCode());
         livrable.setLibelle(dto.getLibelle());
         livrable.setDescription(dto.getDescription());
         livrable.setChemin(dto.getChemin());
-
         livrable.setPhase(phase);
 
-        return livrableRepository.save(livrable);
+        livrable = livrableRepository.save(livrable);
+        return mapEntityToDto(livrable);
     }
 
-
-    public List<Livrable> getLivrablesByPhase(Long phaseId) {
-
+    public List<LivrableDTO> getLivrablesByPhase(Long phaseId) {
         if (!phaseRepository.existsById(phaseId)) {
             throw new ResourceNotFoundException("Phase introuvable avec l'ID : " + phaseId);
         }
-
-        return livrableRepository.findByPhaseId(phaseId);
+        return livrableRepository.findByPhaseId(phaseId)
+                .stream()
+                .map(this::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 
-
-    public Livrable getLivrableById(Long id) {
-
-        return livrableRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Livrable non trouvé avec l'ID : " + id)
-                );
+    public LivrableDTO getLivrableById(Long id) {
+        Livrable livrable = livrableRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Livrable non trouvé avec l'ID : " + id));
+        return mapEntityToDto(livrable);
     }
 
-
-    public Livrable updateLivrable(Long id, LivrableDTO dto) {
-
-        Livrable livrable = getLivrableById(id);
-
+    public LivrableDTO updateLivrable(Long id, LivrableDTO dto) {
+        Livrable livrable = livrableRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Livrable non trouvé avec l'ID : " + id));
         livrable.setLibelle(dto.getLibelle());
         livrable.setDescription(dto.getDescription());
         livrable.setChemin(dto.getChemin());
-
-        return livrableRepository.save(livrable);
+        livrable = livrableRepository.save(livrable);
+        return mapEntityToDto(livrable);
     }
 
-
     public void deleteLivrable(Long id) {
-
         if (!livrableRepository.existsById(id)) {
             throw new ResourceNotFoundException("Impossible de supprimer : Livrable introuvable");
         }
-
         livrableRepository.deleteById(id);
+    }
+
+    private LivrableDTO mapEntityToDto(Livrable livrable) {
+        LivrableDTO dto = new LivrableDTO();
+        dto.setId(livrable.getId());
+        dto.setCode(livrable.getCode());
+        dto.setLibelle(livrable.getLibelle());
+        dto.setDescription(livrable.getDescription());
+        dto.setChemin(livrable.getChemin());
+        if (livrable.getPhase() != null) {
+            dto.setPhaseId(livrable.getPhase().getId());
+        }
+        return dto;
     }
 }
