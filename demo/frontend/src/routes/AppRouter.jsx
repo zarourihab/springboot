@@ -12,6 +12,7 @@ import AffectationsPage from '../pages/affectations/AffectationsPage'
 import LivrablesPage from '../pages/livrables/LivrablesPage'
 import DocumentsPage from '../pages/documents/DocumentsPage'
 import FacturesPage from '../pages/factures/FacturesPage'
+import ProfilPage from '../pages/profil/ProfilPage'  // ✅ NOUVEAU
 
 export default function AppRouter() {
   return (
@@ -31,6 +32,9 @@ export default function AppRouter() {
         <Route index element={<Navigate to="/dashboard" replace />} />
 
         <Route path="dashboard" element={<DashboardPage />} />
+
+        {/* ✅ NOUVEAU : page profil accessible à tous */}
+        <Route path="profil" element={<ProfilPage />} />
 
         <Route
           path="organismes"

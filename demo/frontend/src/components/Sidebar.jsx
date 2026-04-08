@@ -49,9 +49,7 @@ export default function Sidebar() {
     navigate('/login')
   }
 
-  const visibleItems = navItems.filter(
-    (item) => item.roles.includes(role)
-  )
+  const visibleItems = navItems.filter((item) => item.roles.includes(role))
 
   return (
     <aside className="fixed top-0 left-0 h-full w-64 bg-slate-900 border-r border-slate-700/50 flex flex-col z-40">
@@ -88,16 +86,24 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* User & Logout */}
+      {/*  User — cliquable vers /profil */}
       <div className="p-4 border-t border-slate-700/50">
-        <div className="flex items-center gap-3 px-3 py-2 mb-2">
+        <NavLink
+          to="/profil"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-3 py-2 mb-2 rounded-lg transition-colors ${
+              isActive ? 'bg-slate-700/50' : 'hover:bg-slate-800'
+            }`
+          }
+        >
           <div className="w-8 h-8 rounded-full bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-400 text-xs font-bold">
             {userLogin ? userLogin[0].toUpperCase() : '?'}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white text-sm font-medium truncate">{userLogin}</p>
+            <p className="text-slate-500 text-xs">Mon profil</p>
           </div>
-        </div>
+        </NavLink>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors duration-200"
