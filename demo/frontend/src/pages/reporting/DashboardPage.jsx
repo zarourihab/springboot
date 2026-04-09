@@ -11,7 +11,11 @@ export default function DashboardPage() {
   useEffect(() => {
     reportingService.getTableauDeBord()
       .then(setStats)
-      .catch(() => setError('Impossible de charger le tableau de bord'))
+      .catch((err) => {
+        if (err?.response?.status !== 403) {
+          setError('Impossible de charger le tableau de bord')
+        }
+      })
       .finally(() => setLoading(false))
   }, [])
 

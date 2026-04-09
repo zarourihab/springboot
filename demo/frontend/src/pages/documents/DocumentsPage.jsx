@@ -9,6 +9,7 @@ export default function DocumentsPage() {
   const [documents, setDocuments] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
+  const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm()
@@ -23,14 +24,16 @@ export default function DocumentsPage() {
 
   useEffect(() => { load() }, [projetId])
 
-  const openCreate = () => { reset({}); setShowModal(true) }
+  const openCreate = () => { reset({}); setEditing(null); setShowModal(true) }
+  const openEdit = (d) => { reset(d); setEditing(d); setShowModal(true) }
 
   const onSubmit = async (data) => {
     try {
-      await documentService.create(projetId, data)
+      if (editing) await documentService.update(editing.id, data)
+      else await documentService.create(projetId, data)
       setShowModal(false)
       load()
-    } catch { setError('Erreur lors de l\'ajout') }
+    } catch { setError("Erreur lors de l'ajout") }
   }
 
   const onDelete = async (id) => {
@@ -47,46 +50,36 @@ export default function DocumentsPage() {
       error={error} loading={loading}
     >
       <Table
-        headers={['Titre', 'Type', 'Date', 'Description', 'Actions']}
+        // ✅ CORRIGÉ : colonnes selon le vrai DTO (code, libelle, description, chemin)
+        headers={['Code', 'Libellé', 'Description', 'Chemin/Fichier', 'Actions']}
         rows={documents}
         renderRow={(d) => (
           <tr key={d.id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-            <td className="px-4 py-3 text-white font-medium">{d.titre}</td>
+            <td className="px-4 py-3 text-slate-400 font-mono text-xs">{d.code}</td>
+            <td className="px-4 py-3 text-white font-medium">{d.libelle}</td>
+            <td className="px-4 py-3 text-slate-400 max-w-xs truncate">{d.description || '—'}</td>
+            <td className="px-4 py-3 text-slate-400 text-xs truncate max-w-xs">{d.chemin || '—'}</td>
             <td className="px-4 py-3">
-              <span className="px-2 py-1 rounded-md bg-violet-500/10 border border-violet-500/30 text-violet-400 text-xs font-medium">{d.type}</span>
-            </td>
-            <td className="px-4 py-3 text-slate-400">{d.date}</td>
-            <td className="px-4 py-3 text-slate-400 max-w-xs truncate">{d.description}</td>
-            <td className="px-4 py-3">
-              <button onClick={() => onDelete(d.id)}
-                className="px-3 py-1.5 text-xs text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/30 border border-red-500/30 rounded-lg transition-all">
-                Supprimer
-              </button>
+              <ActionButtons onEdit={() => openEdit(d)} onDelete={() => onDelete(d.id)} />
             </td>
           </tr>
         )}
       />
       {showModal && (
-        <Modal title="Ajouter un document" onClose={() => setShowModal(false)}>
+        <Modal title={editing ? 'Modifier le document' : 'Nouveau document'} onClose={() => setShowModal(false)}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Field label="Titre" error={errors.titre?.message}>
-              <input {...register('titre', { required: 'Requis' })} className={inputCls} placeholder="Titre du document" />
+            {/* ✅ CORRIGÉ : champs code + libelle + description + chemin */}
+            <Field label="Code" error={errors.code?.message}>
+              <input {...register('code', { required: 'Requis' })} className={inputCls} placeholder="DOC-001" />
             </Field>
-            <Field label="Type">
-              <select {...register('type')} className={inputCls}>
-                <option value="">-- Type --</option>
-                <option value="CONTRAT">Contrat</option>
-                <option value="AVENANT">Avenant</option>
-                <option value="BON_COMMANDE">Bon de commande</option>
-                <option value="RAPPORT">Rapport</option>
-                <option value="AUTRE">Autre</option>
-              </select>
-            </Field>
-            <Field label="Date">
-              <input {...register('date')} type="date" className={inputCls} />
+            <Field label="Libellé" error={errors.libelle?.message}>
+              <input {...register('libelle', { required: 'Requis' })} className={inputCls} placeholder="Intitulé du document" />
             </Field>
             <Field label="Description">
-              <textarea {...register('description')} className={inputCls} rows="3" />
+              <textarea {...register('description')} className={inputCls} rows="3" placeholder="Description..." />
+            </Field>
+            <Field label="Chemin / Fichier">
+              <input {...register('chemin')} className={inputCls} placeholder="Ex: /docs/contrat.pdf" />
             </Field>
             <ModalActions onClose={() => setShowModal(false)} />
           </form>

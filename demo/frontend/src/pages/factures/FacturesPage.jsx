@@ -10,7 +10,7 @@ export default function FacturesPage() {
   const [editing, setEditing] = useState(null)
   const [error, setError] = useState('')
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm()
+  const { register, handleSubmit, reset } = useForm()
 
   const load = () => {
     setLoading(true)
@@ -26,7 +26,10 @@ export default function FacturesPage() {
 
   const onSubmit = async (data) => {
     try {
-      if (editing) await factureService.update(editing.id, data)
+      if (editing) await factureService.update(editing.id, {
+        dateFacture: data.dateFacture,
+        payee: data.payee === true || data.payee === 'true',
+      })
       setShowModal(false)
       load()
     } catch { setError('Erreur lors de la sauvegarde') }
@@ -38,7 +41,8 @@ export default function FacturesPage() {
     catch { setError('Erreur de suppression') }
   }
 
-  const total = factures.reduce((s, f) => s + (f.montant || 0), 0)
+  const payees = factures.filter(f => f.payee).length
+  const nonPayees = factures.filter(f => !f.payee).length
 
   return (
     <PageLayout
@@ -46,31 +50,36 @@ export default function FacturesPage() {
       subtitle="Liste des factures émises"
       error={error} loading={loading}
     >
-      {/* Summary */}
+      {/* Résumé */}
       {!loading && (
         <div className="px-5 py-4 border-b border-slate-700/50 flex items-center gap-6">
           <div>
-            <p className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Total factures</p>
+            <p className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Total</p>
             <p className="text-2xl font-bold text-white">{factures.length}</p>
           </div>
           <div className="w-px h-10 bg-slate-700" />
           <div>
-            <p className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Montant total</p>
-            <p className="text-2xl font-bold text-cyan-400">{total.toLocaleString()} MAD</p>
+            <p className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Payées</p>
+            <p className="text-2xl font-bold text-emerald-400">{payees}</p>
+          </div>
+          <div className="w-px h-10 bg-slate-700" />
+          <div>
+            <p className="text-slate-400 text-xs uppercase tracking-wider mb-0.5">Non payées</p>
+            <p className="text-2xl font-bold text-amber-400">{nonPayees}</p>
           </div>
         </div>
       )}
 
       <Table
-        headers={['N° Facture', 'Projet', 'Phase', 'Montant', 'Date émission', 'Statut', 'Actions']}
+        // ✅ CORRIGÉ : colonnes selon le vrai DTO (id, dateFacture, payee, phaseId)
+        headers={['ID', 'Phase ID', 'Date facture', 'Statut', 'Actions']}
         rows={factures}
         renderRow={(f) => (
           <tr key={f.id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-            <td className="px-4 py-3 text-slate-400 font-mono text-xs">{f.numero || `FAC-${f.id}`}</td>
-            <td className="px-4 py-3 text-white">{f.projetIntitule || f.phase?.projet?.intitule || '—'}</td>
-            <td className="px-4 py-3 text-slate-300">{f.phaseIntitule || f.phase?.intitule || '—'}</td>
-            <td className="px-4 py-3 text-cyan-400 font-semibold">{f.montant?.toLocaleString()} MAD</td>
-            <td className="px-4 py-3 text-slate-400">{f.dateEmission}</td>
+            <td className="px-4 py-3 text-slate-400 font-mono text-xs">FAC-{f.id}</td>
+            <td className="px-4 py-3 text-slate-300">Phase #{f.phaseId}</td>
+            {/* ✅ CORRIGÉ : dateFacture au lieu de dateEmission */}
+            <td className="px-4 py-3 text-slate-400">{f.dateFacture || '—'}</td>
             <td className="px-4 py-3">
               <span className={`px-2 py-1 rounded-md border text-xs font-medium ${
                 f.payee
@@ -86,21 +95,16 @@ export default function FacturesPage() {
           </tr>
         )}
       />
+
       {showModal && (
         <Modal title="Modifier la facture" onClose={() => setShowModal(false)}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Field label="N° Facture">
-              <input {...register('numero')} className={inputCls} />
+            <Field label="Date de facturation">
+              <input {...register('dateFacture')} type="date" className={inputCls} />
             </Field>
-            <Field label="Montant (MAD)">
-              <input {...register('montant', { valueAsNumber: true })} type="number" className={inputCls} />
-            </Field>
-            <Field label="Date d'émission">
-              <input {...register('dateEmission')} type="date" className={inputCls} />
-            </Field>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input {...register('payee')} type="checkbox" />
-              <span className="text-sm text-slate-300">Payée</span>
+            <label className="flex items-center gap-3 cursor-pointer p-3 bg-slate-900/40 rounded-lg">
+              <input {...register('payee')} type="checkbox" className="w-4 h-4 rounded border-slate-600 text-indigo-500" />
+              <span className="text-sm text-slate-300">Marquer comme payée</span>
             </label>
             <ModalActions onClose={() => setShowModal(false)} />
           </form>

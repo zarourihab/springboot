@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useParams, useNavigate } from 'react-router-dom'
 import * as phaseService from '../../services/phaseService'
 import { PageLayout, Table, Modal, Field, ModalActions, ActionButtons, inputCls } from '../organismes/OrganismesPage'
+import * as factureService from '../../services/factureService'
 
 export default function PhasesPage() {
   const { projetId } = useParams()
@@ -30,11 +31,14 @@ export default function PhasesPage() {
 
   const onSubmit = async (data) => {
     try {
-      if (editing) await phaseService.update(editing.id, data)
-      else await phaseService.create(projetId, data)
+      const payload = { ...data, montant: data.montant ? Number(data.montant) : null }
+      if (editing) await phaseService.update(editing.id, payload)
+      else await phaseService.create(projetId, payload)
       setShowModal(false)
       load()
-    } catch { setError('Erreur lors de la sauvegarde') }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erreur lors de la sauvegarde')
+    }
   }
 
   const onDelete = async (id) => {
@@ -44,20 +48,24 @@ export default function PhasesPage() {
   }
 
   const handlePatch = async (action, id) => {
-    const actions = {
-      realisation: phaseService.realiser,
-      facturation: phaseService.facturer,
-      paiement: phaseService.payer,
+    try {
+      if (action === 'facturation') {
+        // ✅ D'abord PATCH l'état facturation
+        await phaseService.facturer(id)
+        // ✅ Ensuite créer la vraie facture
+        await factureService.create(id, {
+          dateFacture: new Date().toISOString().split('T')[0],
+          payee: false
+        })
+      } else if (action === 'realisation') {
+        await phaseService.realiser(id)
+      } else if (action === 'paiement') {
+        await phaseService.payer(id)
+      }
+      load()
+    } catch (err) {
+      setError(`Erreur lors de l'action ${action}`)
     }
-    try { await actions[action](id); load() }
-    catch { setError(`Erreur lors du patch ${action}`) }
-  }
-
-  const statutColor = (s) => {
-    if (s === 'REALISEE') return 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-    if (s === 'FACTUREE') return 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-    if (s === 'PAYEE') return 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400'
-    return 'bg-slate-500/10 border-slate-500/30 text-slate-400'
   }
 
   return (
@@ -68,53 +76,41 @@ export default function PhasesPage() {
       error={error} loading={loading}
     >
       <Table
-        headers={['Intitulé', 'Délai', 'Montant', 'Statut', 'Réalisation', 'Facturation', 'Paiement', 'Actions']}
+        headers={['Code', 'Libellé', 'Début', 'Fin', 'Montant', 'Réal.', 'Fact.', 'Paie.', 'Actions']}
         rows={phases}
         renderRow={(p) => (
           <tr key={p.id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-            <td className="px-4 py-3 text-white font-medium">{p.intitule}</td>
-            <td className="px-4 py-3 text-slate-400">{p.delai} j</td>
-            <td className="px-4 py-3 text-slate-300">{p.montant?.toLocaleString()} MAD</td>
-            <td className="px-4 py-3">
-              <span className={`px-2 py-1 rounded-md border text-xs font-medium ${statutColor(p.statut)}`}>{p.statut || '—'}</span>
-            </td>
-            <td className="px-4 py-3">
-              <button
-                onClick={() => handlePatch('realisation', p.id)}
-                disabled={p.realisee}
-                className="px-2 py-1 text-xs rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              >
-                {p.realisee ? '✅' : 'Réaliser'}
+            <td className="px-3 py-3 text-slate-400 font-mono text-xs">{p.code}</td>
+            {/* ✅ CORRIGÉ : p.libelle au lieu de p.intitule */}
+            <td className="px-3 py-3 text-white font-medium">{p.libelle}</td>
+            <td className="px-3 py-3 text-slate-400 text-xs">{p.dateDebut || '—'}</td>
+            <td className="px-3 py-3 text-slate-400 text-xs">{p.dateFin || '—'}</td>
+            <td className="px-3 py-3 text-slate-300">{p.montant ? `${Number(p.montant).toLocaleString()}` : '—'}</td>
+            {/* ✅ CORRIGÉ : etatRealisation au lieu de realisee */}
+            <td className="px-2 py-3">
+              <button onClick={() => handlePatch('realisation', p.id)} disabled={p.etatRealisation}
+                className="px-2 py-1 text-xs rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                {p.etatRealisation ? '✅' : 'Réal.'}
               </button>
             </td>
-            <td className="px-4 py-3">
-              <button
-                onClick={() => handlePatch('facturation', p.id)}
-                disabled={!p.realisee || p.facturee}
-                className="px-2 py-1 text-xs rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              >
-                {p.facturee ? '✅' : 'Facturer'}
+            <td className="px-2 py-3">
+              <button onClick={() => handlePatch('facturation', p.id)} disabled={!p.etatRealisation || p.etatFacturation}
+                className="px-2 py-1 text-xs rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                {p.etatFacturation ? '✅' : 'Fact.'}
               </button>
             </td>
-            <td className="px-4 py-3">
-              <button
-                onClick={() => handlePatch('paiement', p.id)}
-                disabled={!p.facturee || p.payee}
-                className="px-2 py-1 text-xs rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              >
-                {p.payee ? '✅' : 'Payer'}
+            <td className="px-2 py-3">
+              <button onClick={() => handlePatch('paiement', p.id)} disabled={!p.etatFacturation || p.etatPaiement}
+                className="px-2 py-1 text-xs rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                {p.etatPaiement ? '✅' : 'Paie.'}
               </button>
             </td>
-            <td className="px-4 py-3">
-              <div className="flex items-center gap-1.5">
+            <td className="px-2 py-3">
+              <div className="flex items-center gap-1">
                 <button onClick={() => navigate(`/phases/${p.id}/affectations`)}
-                  className="px-2 py-1.5 text-xs text-violet-400 bg-violet-500/10 border border-violet-500/30 hover:bg-violet-500/20 rounded-lg transition-all">
-                  Affec.
-                </button>
+                  className="px-2 py-1 text-xs text-violet-400 bg-violet-500/10 border border-violet-500/30 hover:bg-violet-500/20 rounded-lg transition-all">Aff.</button>
                 <button onClick={() => navigate(`/phases/${p.id}/livrables`)}
-                  className="px-2 py-1.5 text-xs text-teal-400 bg-teal-500/10 border border-teal-500/30 hover:bg-teal-500/20 rounded-lg transition-all">
-                  Livr.
-                </button>
+                  className="px-2 py-1 text-xs text-teal-400 bg-teal-500/10 border border-teal-500/30 hover:bg-teal-500/20 rounded-lg transition-all">Livr.</button>
                 <ActionButtons onEdit={() => openEdit(p)} onDelete={() => onDelete(p.id)} />
               </div>
             </td>
@@ -124,15 +120,24 @@ export default function PhasesPage() {
       {showModal && (
         <Modal title={editing ? 'Modifier la phase' : 'Nouvelle phase'} onClose={() => setShowModal(false)}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Field label="Intitulé" error={errors.intitule?.message}>
-              <input {...register('intitule', { required: 'Requis' })} className={inputCls} placeholder="Intitulé de la phase" />
-            </Field>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Délai (jours)" error={errors.delai?.message}>
-                <input {...register('delai', { required: 'Requis', valueAsNumber: true })} type="number" className={inputCls} placeholder="30" />
+              <Field label="Code" error={errors.code?.message}>
+                <input {...register('code', { required: 'Requis' })} className={inputCls} placeholder="PH-001" />
               </Field>
               <Field label="Montant (MAD)">
-                <input {...register('montant', { valueAsNumber: true })} type="number" className={inputCls} placeholder="50000" />
+                <input {...register('montant')} type="number" className={inputCls} placeholder="50000" />
+              </Field>
+            </div>
+            {/* ✅ CORRIGÉ : champ libelle */}
+            <Field label="Libellé" error={errors.libelle?.message}>
+              <input {...register('libelle', { required: 'Requis' })} className={inputCls} placeholder="Libellé de la phase" />
+            </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Date début" error={errors.dateDebut?.message}>
+                <input {...register('dateDebut', { required: 'Requis' })} type="date" className={inputCls} />
+              </Field>
+              <Field label="Date fin" error={errors.dateFin?.message}>
+                <input {...register('dateFin', { required: 'Requis' })} type="date" className={inputCls} />
               </Field>
             </div>
             <Field label="Description">

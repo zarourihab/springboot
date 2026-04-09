@@ -45,24 +45,20 @@ export default function LivrablesPage() {
   return (
     <PageLayout
       title={`Livrables — Phase #${phaseId}`}
-      subtitle="Documents et livrables associés à cette phase"
+      subtitle="Livrables associés à cette phase"
       onAdd={openCreate}
       error={error} loading={loading}
     >
       <Table
-        headers={['Désignation', 'Type', 'Date prévue', 'Date livraison', 'Statut', 'Actions']}
+        // ✅ CORRIGÉ : colonnes selon le vrai DTO (code, libelle, description, chemin)
+        headers={['Code', 'Libellé', 'Description', 'Chemin/Fichier', 'Actions']}
         rows={livrables}
         renderRow={(l) => (
           <tr key={l.id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-            <td className="px-4 py-3 text-white font-medium">{l.designation}</td>
-            <td className="px-4 py-3 text-slate-400">{l.type}</td>
-            <td className="px-4 py-3 text-slate-400">{l.datePrevue}</td>
-            <td className="px-4 py-3 text-slate-400">{l.dateLivraison || '—'}</td>
-            <td className="px-4 py-3">
-              <span className={`px-2 py-1 rounded-md border text-xs font-medium ${l.livre ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-slate-500/10 border-slate-500/30 text-slate-400'}`}>
-                {l.livre ? 'Livré' : 'En attente'}
-              </span>
-            </td>
+            <td className="px-4 py-3 text-slate-400 font-mono text-xs">{l.code}</td>
+            <td className="px-4 py-3 text-white font-medium">{l.libelle}</td>
+            <td className="px-4 py-3 text-slate-400 max-w-xs truncate">{l.description || '—'}</td>
+            <td className="px-4 py-3 text-slate-400 text-xs truncate max-w-xs">{l.chemin || '—'}</td>
             <td className="px-4 py-3">
               <ActionButtons onEdit={() => openEdit(l)} onDelete={() => onDelete(l.id)} />
             </td>
@@ -72,24 +68,19 @@ export default function LivrablesPage() {
       {showModal && (
         <Modal title={editing ? 'Modifier le livrable' : 'Nouveau livrable'} onClose={() => setShowModal(false)}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Field label="Désignation" error={errors.designation?.message}>
-              <input {...register('designation', { required: 'Requis' })} className={inputCls} placeholder="Nom du livrable" />
+            {/* ✅ CORRIGÉ : champs code + libelle + description + chemin */}
+            <Field label="Code" error={errors.code?.message}>
+              <input {...register('code', { required: 'Requis' })} className={inputCls} placeholder="LIV-001" />
             </Field>
-            <Field label="Type">
-              <input {...register('type')} className={inputCls} placeholder="Ex: Rapport, Prototype…" />
+            <Field label="Libellé" error={errors.libelle?.message}>
+              <input {...register('libelle', { required: 'Requis' })} className={inputCls} placeholder="Nom du livrable" />
             </Field>
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Date prévue">
-                <input {...register('datePrevue')} type="date" className={inputCls} />
-              </Field>
-              <Field label="Date livraison">
-                <input {...register('dateLivraison')} type="date" className={inputCls} />
-              </Field>
-            </div>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input {...register('livre')} type="checkbox" className="rounded border-slate-600 text-indigo-500" />
-              <span className="text-sm text-slate-300">Livré</span>
-            </label>
+            <Field label="Description">
+              <textarea {...register('description')} className={inputCls} rows="3" placeholder="Description..." />
+            </Field>
+            <Field label="Chemin / Fichier">
+              <input {...register('chemin')} className={inputCls} placeholder="Ex: /docs/rapport.pdf" />
+            </Field>
             <ModalActions onClose={() => setShowModal(false)} />
           </form>
         </Modal>

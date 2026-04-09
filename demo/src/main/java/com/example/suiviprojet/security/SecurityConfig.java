@@ -41,12 +41,22 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,    "/api/employes/**").authenticated()
 
 
-                        .requestMatchers("/api/organismes/**").hasAnyRole("ADMIN", "SECRETAIRE", "DIRECTEUR")
+                        .requestMatchers(HttpMethod.GET, "/api/organismes/**")
+                        .hasAnyRole("ADMIN", "SECRETAIRE", "DIRECTEUR", "CHEF_PROJET")
+
+                        .requestMatchers(HttpMethod.POST, "/api/organismes/**")
+                        .hasAnyRole("ADMIN", "SECRETAIRE", "DIRECTEUR")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/organismes/**")
+                        .hasAnyRole("ADMIN", "SECRETAIRE", "DIRECTEUR")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/organismes/**")
+                        .hasAnyRole("ADMIN", "SECRETAIRE", "DIRECTEUR")
 
 
-                        .requestMatchers(HttpMethod.POST,   "/api/projets/**").hasAnyRole("ADMIN", "SECRETAIRE")
-                        .requestMatchers(HttpMethod.PUT,    "/api/projets/**").hasAnyRole("ADMIN", "SECRETAIRE")
-                        .requestMatchers(HttpMethod.DELETE, "/api/projets/**").hasAnyRole("ADMIN", "SECRETAIRE")
+                        .requestMatchers(HttpMethod.POST,   "/api/projets/**").hasAnyRole("ADMIN", "SECRETAIRE","CHEF_PROJET")
+                        .requestMatchers(HttpMethod.PUT,    "/api/projets/**").hasAnyRole("ADMIN", "SECRETAIRE","CHEF_PROJET")
+                        .requestMatchers(HttpMethod.DELETE, "/api/projets/**").hasAnyRole("ADMIN", "SECRETAIRE","CHEF_PROJET")
                         .requestMatchers(HttpMethod.GET,    "/api/projets/**").authenticated()
 
 
@@ -69,7 +79,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/phases/*/facture/**").hasAnyRole("ADMIN", "COMPTABLE")
 
 
-                        .requestMatchers("/api/reporting/**").hasAnyRole("ADMIN", "DIRECTEUR", "COMPTABLE")
+                        .requestMatchers("/api/reporting/**").hasAnyRole("ADMIN", "DIRECTEUR", "COMPTABLE", "CHEF_PROJET")
 
 
                         .anyRequest().authenticated()
