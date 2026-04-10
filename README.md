@@ -109,10 +109,23 @@ phase5
 
 ---
 
+
+
 ## - Phase 14 — Authentification + rôles 
 ![img](screens_fadwa/GET%20LOGIN_ph14.jpg)
 
 ![img](screens_fadwa/me_ph14.jpg)
+
+## Deñenstration
+
+
+
+
+https://github.com/user-attachments/assets/063f200d-9906-4413-b502-191b54f65f64
+
+
+
+
 
 
  
