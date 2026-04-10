@@ -7,9 +7,10 @@ import com.example.suiviprojet.exceptions.BusinessException;
 import com.example.suiviprojet.exceptions.ResourceNotFoundException;
 import com.example.suiviprojet.repositories.EmployeRepository;
 import com.example.suiviprojet.repositories.ProfilRepository;
-import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,19 +21,18 @@ public class EmployeService {
     private final EmployeRepository employeRepository;
     private final ProfilRepository profilRepository;
 
-    public EmployeService(PasswordEncoder passwordEncoder, EmployeRepository employeRepository, ProfilRepository profilRepository) {
+    public EmployeService(PasswordEncoder passwordEncoder,
+                          EmployeRepository employeRepository,
+                          ProfilRepository profilRepository) {
         this.passwordEncoder = passwordEncoder;
         this.employeRepository = employeRepository;
         this.profilRepository = profilRepository;
-
     }
 
     public EmployeDTO create(EmployeDTO dto) {
         verifierUnicite(dto, null);
-
         Employe employe = new Employe();
         mapDtoToEntity(dto, employe);
-
         employe = employeRepository.save(employe);
         return mapEntityToDto(employe);
     }
@@ -45,56 +45,55 @@ public class EmployeService {
 
     public List<EmployeDTO> findAll(String query) {
         List<Employe> employes;
-
         if (query != null && !query.isBlank()) {
             employes = employeRepository
                     .findByNomContainingOrPrenomContainingOrMatriculeContainingOrLoginContainingOrEmailContaining(
-                            query, query, query, query, query
-                    );
+                            query, query, query, query, query);
         } else {
             employes = employeRepository.findAll();
         }
+        return employes.stream().map(this::mapEntityToDto).collect(Collectors.toList());
+    }
 
-        return employes.stream()
-                .map(this::mapEntityToDto)
-                .collect(Collectors.toList());
+    public List<EmployeDTO> findDisponibles(LocalDate dateDebut, LocalDate dateFin) {
+        if (dateDebut == null || dateFin == null) {
+            throw new BusinessException("Les dates dateDebut et dateFin sont obligatoires");
+        }
+        if (dateDebut.isAfter(dateFin)) {
+            throw new BusinessException("dateDebut doit être avant ou égale à dateFin");
+        }
+        return employeRepository.findDisponibles(dateDebut, dateFin)
+                .stream().map(this::mapEntityToDto).collect(Collectors.toList());
     }
 
     public EmployeDTO update(Long id, EmployeDTO dto) {
         Employe employe = employeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employé non trouvé"));
-
         verifierUnicite(dto, id);
         mapDtoToEntity(dto, employe);
-
         employe = employeRepository.save(employe);
         return mapEntityToDto(employe);
     }
 
     public void delete(Long id) {
-        Employe employe = employeRepository.findById(id)
+        employeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employé non trouvé"));
         employeRepository.deleteById(id);
     }
 
     private void verifierUnicite(EmployeDTO dto, Long idEnCours) {
         employeRepository.findByMatricule(dto.matricule).ifPresent(e -> {
-            if (idEnCours == null || !e.getId().equals(idEnCours)) {
+            if (idEnCours == null || !e.getId().equals(idEnCours))
                 throw new BusinessException("Matricule déjà utilisé");
-            }
         });
-
         employeRepository.findByLogin(dto.login).ifPresent(e -> {
-            if (idEnCours == null || !e.getId().equals(idEnCours)) {
+            if (idEnCours == null || !e.getId().equals(idEnCours))
                 throw new BusinessException("Login déjà utilisé");
-            }
         });
-
         if (dto.email != null && !dto.email.isBlank()) {
             employeRepository.findByEmail(dto.email).ifPresent(e -> {
-                if (idEnCours == null || !e.getId().equals(idEnCours)) {
+                if (idEnCours == null || !e.getId().equals(idEnCours))
                     throw new BusinessException("Email déjà utilisé");
-                }
             });
         }
     }
@@ -106,11 +105,9 @@ public class EmployeService {
         employe.setTelephone(dto.telephone);
         employe.setEmail(dto.email);
         employe.setLogin(dto.login);
-
         if (dto.password != null && !dto.password.isBlank()) {
             employe.setPassword(passwordEncoder.encode(dto.password));
         }
-
         if (dto.profilId != null) {
             Profil profil = profilRepository.findById(dto.profilId)
                     .orElseThrow(() -> new ResourceNotFoundException("Profil non trouvé"));
