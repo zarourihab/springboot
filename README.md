@@ -1,5 +1,10 @@
 # Plan de travail du projet **Gestion des projets**
 
+
+<img width="566" height="299" alt="image" src="https://github.com/user-attachments/assets/d5c72b9a-a5ca-4b2b-aa36-c92fc0252cb3" />
+
+ 
+
 ## - Phases 1 - 3
 
 Initialisation, BDD, Entités JPA, Repositories
