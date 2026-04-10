@@ -55,7 +55,7 @@ phase5
 
 
 ## - Phase 7 — Gestion des phases 
-![img](screens_fadwa/post_ph7.jpg)
+<img width="749" height="359" alt="image" src="https://github.com/user-attachments/assets/657fd754-17c8-4369-a7df-9f40c228be5e" />
 
 ![img](screens_fadwa/get_ph7.jpg)
 
