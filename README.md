@@ -70,12 +70,13 @@ phase5
 
 
 ## - Phase 9 — Gestion des livrables
-![Image 10](screens_rihab/Capture%20d'écran%202026-03-13%20170352.png?raw=true)
 
-![Image 11](screens_rihab/Capture%20d'écran%202026-03-13%20173001.png?raw=true)
+<img width="747" height="311" alt="image" src="https://github.com/user-attachments/assets/14d6fcd5-17fc-4f11-9ad5-a8c7f6f7b232" />
+
+<img width="754" height="257" alt="image" src="https://github.com/user-attachments/assets/cc56639b-f154-40ea-9815-b284420028b4" />
 
 
-![Image 12](screens_rihab/Capture%20d'écran%202026-03-13%20173127.png?raw=true)
+<img width="746" height="278" alt="image" src="https://github.com/user-attachments/assets/f629eea6-f8ac-45e8-829d-0b9ab7a93963" />
 
 
 ---
