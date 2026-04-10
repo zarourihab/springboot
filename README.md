@@ -113,23 +113,30 @@ phase5
 
 ## - Phase 13 - gestion des exceptions
 
-![](screens_saadia/exception.jpeg)
+![exception](https://github.com/user-attachments/assets/5c1bde92-e7a1-412e-95e4-9b992639ed8a)
+
 
 
 ### test Swagger
-![](screens_saadia/swagger%20(1).jpeg)
+![exception](https://github.com/user-attachments/assets/25667110-70e4-4666-bd5d-a2cf6298c49d)
+
 
 ---
 
-![](screens_saadia/swagger%20(2).jpeg)
+![exception](https://github.com/user-attachments/assets/3030cb63-9275-426c-8e7e-3e7fa108062e)
+
 
 ---
 
-![](screens_saadia/swagger%20(3).jpeg)
+![swagger (3)](https://github.com/user-attachments/assets/0bd84f8a-9004-43d3-b925-d3e4674fb4f5)
+
 
 ---
 
-![](screens_saadia/swagger%20(4).jpeg)
+
+![swagger (4)](https://github.com/user-attachments/assets/527e1cc4-570e-40ad-b206-9a2347977760)
+
+
 
 ---
 
@@ -140,7 +147,8 @@ phase5
 ![GET LOGIN_ph14](https://github.com/user-attachments/assets/937ddc74-bab7-4ae4-bd0c-c83e86983802)
 
 
-![img](screens_fadwa/me_ph14.jpg)
+![GET LOGIN_ph14](https://github.com/user-attachments/assets/8d1f5c1d-28a8-4a38-af58-86f992a7db0e)
+
 
 ## Deñenstration
 
