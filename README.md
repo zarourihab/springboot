@@ -22,14 +22,14 @@ Initialisation, BDD, Entités JPA, Repositories
 
 ## - Phase 4 — Gestion des organismes
 
-![Image 4](screens_rihab/Capture%20d'écran%202026-03-12%20170024.png?raw=true)
+<img width="762" height="344" alt="image" src="https://github.com/user-attachments/assets/7dfec967-491e-4ca9-ac1a-5ad687363682" />
 
 
-![Image 5](screens_rihab/Capture%20d'écran%202026-03-12%20171557.png?raw=true)
+<img width="745" height="272" alt="image" src="https://github.com/user-attachments/assets/d914e7f4-f788-4c0f-a106-9f6015a69d39" />
 
-![Image 6](screens_rihab/Capture%20d'écran%202026-03-12%20172203.png?raw=true)
+<img width="752" height="259" alt="image" src="https://github.com/user-attachments/assets/84d4ad40-f297-40cb-a0e9-0bcb94e964f7" />
 
-![Image 7](screens_rihab/Capture%20d'écran%202026-03-12%20172303.png?raw=true)
+<img width="780" height="231" alt="image" src="https://github.com/user-attachments/assets/41426607-11da-49b7-a049-741561c4368f" />
 
 phase5
 
