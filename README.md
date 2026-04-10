@@ -63,9 +63,10 @@ phase5
 ---
 
 ## - Phase 8 Gestons des affectations
-![](screens_saadia/post_affectation.jpeg)
 
-![](screens_saadia/get_affectation.jpeg)
+<img width="741" height="352" alt="image" src="https://github.com/user-attachments/assets/5c4e7f83-04d3-4380-87ac-c29494619e8c" />
+
+<img width="622" height="230" alt="image" src="https://github.com/user-attachments/assets/f606c4f6-7df1-43b9-a8ce-4407f6bed49d" />
 
 
 ## - Phase 9 — Gestion des livrables
