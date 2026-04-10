@@ -97,7 +97,7 @@ phase5
 
 ## - Phase 11 - Gestion des factures
 
-![](screens_saadia/get_facture.jpeg)
+<img width="754" height="349" alt="image" src="https://github.com/user-attachments/assets/6dbd94b3-89de-433a-b0b1-a271983f3156" />
 
 ---
 
