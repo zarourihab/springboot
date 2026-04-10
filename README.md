@@ -1,7 +1,8 @@
 # Plan de travail du projet **Gestion des projets**
 
 
- 
+ <img width="426" height="230" alt="Capture d’écran 2026-04-10 224423" src="https://github.com/user-attachments/assets/63a48ec8-9647-4f3e-9aaf-77a708b2eed6" />
+
 
 ## - Phases 1 - 3
 
