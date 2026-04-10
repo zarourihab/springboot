@@ -46,7 +46,7 @@ phase5
 
 ## - Phase 6 — Gestion des projets
 
-![Image 8](screens_rihab/Capture%20d'écran%202026-03-13%20141356.png?raw=true)
+<img width="756" height="350" alt="image" src="https://github.com/user-attachments/assets/089cca02-377b-42ee-9b84-f32e295cd171" />
 
 ![Image 9](screens_rihab/Capture%20d'écran%202026-03-13%20155811.png?raw=true)
 
