@@ -82,12 +82,11 @@ phase5
 ---
 ## - Phase 10 — Gestion des documents projet 
 
-![img](screens_fadwa/post_ph10.jpg)
+<img width="755" height="356" alt="image" src="https://github.com/user-attachments/assets/774567e0-ceb9-43b9-9790-dddab8c2aadd" />
 
 
-![img](screens_fadwa/get_ph10.jpg)
+<img width="729" height="274" alt="image" src="https://github.com/user-attachments/assets/4a8b3cd8-53c0-45fc-bac9-8bf7e58ae496" />
 
-![img](screens_fadwa/get_download_ph10.jpg)
 
 
 ![img](screens_fadwa/get_download3_ph10.jpg)
