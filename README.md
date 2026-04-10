@@ -36,7 +36,7 @@ phase5
 ---
 
 ## - Phase 5 - Gestion des employes
-![](screens_saadia/Post_employee.jpeg)ç
+<img width="677" height="268" alt="image" src="https://github.com/user-attachments/assets/367c6a3d-1212-48f7-84be-a2f807732b4e" />
 
 ![](screens_saadia/get_employe.jpeg)
 
