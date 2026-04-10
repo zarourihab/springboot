@@ -103,7 +103,7 @@ phase5
 
 ## - Phase 12 — Reporting et recherches métier 
 
-![img](screens_fadwa/get_ph12.jpg)
+<img width="755" height="347" alt="image" src="https://github.com/user-attachments/assets/7038d29f-c61b-4e0a-b7c3-c74e5eac833f" />
 
 ![img](screens_fadwa/get_paye.jpg)
 
