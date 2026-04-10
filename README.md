@@ -12,7 +12,7 @@
 Initialisation, BDD, Entités JPA, Repositories
 
 
-![Image 3](screens_rihab/Capture%20d'écran%202026-03-12%20160829.png?raw=true)
+<img width="755" height="362" alt="image" src="https://github.com/user-attachments/assets/2446a560-aa25-4e9a-be74-dedb87b651c4" />
 
 
 ![Image 1](screens_rihab/Capture%20d'écran%202026-03-12%20152450.png?raw=true)
