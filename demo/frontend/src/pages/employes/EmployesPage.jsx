@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as employeService from '../../services/employeService'
-import { PageLayout, Table, Modal, Field, ModalActions, ActionButtons, inputCls } from '../organismes/OrganismesPage'
+import { PageLayout, Table, Modal, Field, ModalActions, ActionButtons, inputStyle, tdStyle } from '../organismes/OrganismesPage'
 import { useAuth } from '../../context/AuthContext'
 import { usePagination } from '../../hooks/useApi'
 import Pagination from '../../components/Pagination'
@@ -33,17 +33,9 @@ export default function EmployesPage() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm()
   const { register: registerDispo, handleSubmit: handleDispo } = useForm()
 
-  // Filtre côté client sur la liste chargée
   const filtered = employes.filter((e) => {
     const q = search.toLowerCase()
-    return (
-      !q ||
-      e.matricule?.toLowerCase().includes(q) ||
-      e.nom?.toLowerCase().includes(q) ||
-      e.prenom?.toLowerCase().includes(q) ||
-      e.login?.toLowerCase().includes(q) ||
-      e.email?.toLowerCase().includes(q)
-    )
+    return !q || e.matricule?.toLowerCase().includes(q) || e.nom?.toLowerCase().includes(q) || e.prenom?.toLowerCase().includes(q) || e.login?.toLowerCase().includes(q) || e.email?.toLowerCase().includes(q)
   })
 
   const { page, setPage, totalPages, paginated } = usePagination(filtered, PAGE_SIZE)
@@ -67,11 +59,8 @@ export default function EmployesPage() {
       if (!payload.password) delete payload.password
       if (editing) await employeService.update(editing.id, payload)
       else         await employeService.create(payload)
-      setShowModal(false)
-      load()
-    } catch (err) {
-      setError(err.response?.data?.message || 'Erreur lors de la sauvegarde')
-    }
+      setShowModal(false); load()
+    } catch (err) { setError(err.response?.data?.message || 'Erreur lors de la sauvegarde') }
   }
 
   const onDelete = async (id) => {
@@ -82,45 +71,30 @@ export default function EmployesPage() {
 
   const onSearchDispo = async (data) => {
     setDispoLoading(true)
-    try {
-      const result = await employeService.getDisponibles(data.dateDebut, data.dateFin)
-      setDispoResult(result)
-    } catch (err) {
-      setError(err.response?.data?.message || 'Erreur disponibilité')
-    } finally {
-      setDispoLoading(false)
-    }
+    try { setDispoResult(await employeService.getDisponibles(data.dateDebut, data.dateFin)) }
+    catch (err) { setError(err.response?.data?.message || 'Erreur disponibilité') }
+    finally { setDispoLoading(false) }
   }
 
   const getProfilLabel = (e) => {
-    if (e.profilId) {
-      const p = PROFILS.find((p) => p.id === e.profilId)
-      return p?.label || String(e.profilId)
-    }
+    if (e.profilId) { const p = PROFILS.find((p) => p.id === e.profilId); return p?.label || String(e.profilId) }
     return '—'
   }
 
+  const badgeStyle = {
+    padding: '3px 10px', borderRadius: '99px', fontSize: '11px', fontWeight: '600',
+    backgroundColor: 'var(--accent-bg)', border: '1px solid var(--accent-border)', color: 'var(--accent)',
+  }
+
   return (
-    <PageLayout
-      title="Employés"
-      subtitle="Gestion du personnel"
-      onAdd={canWrite ? openCreate : null}
-      error={error}
-      loading={loading}
-    >
-      {/* Barre de recherche + bouton disponibilité */}
-      <div className="flex items-center gap-3 mb-4">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-          placeholder="Rechercher par matricule, nom, login, email…"
-          className={inputCls + ' flex-1'}
-        />
-        <button
-          onClick={() => { setShowDispo(true); setDispoResult(null) }}
-          className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 border border-slate-600/50 text-slate-300 hover:text-white rounded-lg text-sm font-medium transition-all whitespace-nowrap"
-        >
+    <PageLayout title="Employés" subtitle="Gestion du personnel" onAdd={canWrite ? openCreate : null} error={error} loading={loading}>
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+        <input type="text" value={search} onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+          placeholder="Rechercher par matricule, nom, login, email…" style={{ ...inputStyle, flex: 1 }} />
+        <button onClick={() => { setShowDispo(true); setDispoResult(null) }}
+          style={{ padding: '10px 16px', backgroundColor: 'var(--bg-input)', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>
           Disponibilité
         </button>
       </div>
@@ -129,71 +103,54 @@ export default function EmployesPage() {
         headers={['Matricule', 'Nom', 'Prénom', 'Login', 'Email', 'Profil', ...(canWrite ? ['Actions'] : [])]}
         rows={paginated}
         renderRow={(e) => (
-          <tr key={e.id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-            <td className="px-4 py-3 text-slate-400 font-mono text-xs">{e.matricule}</td>
-            <td className="px-4 py-3 text-white font-medium">{e.nom}</td>
-            <td className="px-4 py-3 text-slate-300">{e.prenom}</td>
-            <td className="px-4 py-3 text-slate-400">{e.login}</td>
-            <td className="px-4 py-3 text-slate-400">{e.email}</td>
-            <td className="px-4 py-3">
-              <span className="px-2 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-medium">
-                {getProfilLabel(e)}
-              </span>
-            </td>
-            {canWrite && (
-              <td className="px-4 py-3">
-                <ActionButtons onEdit={() => openEdit(e)} onDelete={() => onDelete(e.id)} />
-              </td>
-            )}
+          <tr key={e.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}
+            onMouseEnter={(ev) => ev.currentTarget.style.backgroundColor = 'var(--bg-hover)'}
+            onMouseLeave={(ev) => ev.currentTarget.style.backgroundColor = 'transparent'}>
+            <td style={tdStyle}><span style={{ color: 'var(--text-muted)', fontFamily: 'monospace', fontSize: '12px' }}>{e.matricule}</span></td>
+            <td style={{ ...tdStyle, color: 'var(--text-primary)', fontWeight: '500' }}>{e.nom}</td>
+            <td style={{ ...tdStyle, color: 'var(--text-secondary)' }}>{e.prenom}</td>
+            <td style={{ ...tdStyle, color: 'var(--text-secondary)' }}>{e.login}</td>
+            <td style={{ ...tdStyle, color: 'var(--text-secondary)' }}>{e.email}</td>
+            <td style={tdStyle}><span style={badgeStyle}>{getProfilLabel(e)}</span></td>
+            {canWrite && <td style={tdStyle}><ActionButtons onEdit={() => openEdit(e)} onDelete={() => onDelete(e.id)} /></td>}
           </tr>
         )}
       />
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
-      {/* Modal création / modification */}
+      {/* Modal création/modification */}
       {showModal && (
         <Modal title={editing ? "Modifier l'employé" : 'Nouvel employé'} onClose={() => setShowModal(false)}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <Field label="Matricule" error={errors.matricule?.message}>
-                <input {...register('matricule', { required: 'Requis' })} className={inputCls} placeholder="EMP-001" />
+                <input {...register('matricule', { required: 'Requis' })} style={inputStyle} placeholder="EMP-001" />
               </Field>
               <Field label="Profil" error={errors.profilId?.message}>
-                <select {...register('profilId', { required: 'Requis' })} className={inputCls}>
-                  <option value="">-- Choisir un profil --</option>
-                  {PROFILS.map((p) => (
-                    <option key={p.id} value={p.id}>{p.label}</option>
-                  ))}
+                <select {...register('profilId', { required: 'Requis' })} style={inputStyle}>
+                  <option value="">-- Choisir --</option>
+                  {PROFILS.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
                 </select>
               </Field>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <Field label="Nom" error={errors.nom?.message}>
-                <input {...register('nom', { required: 'Requis' })} className={inputCls} placeholder="Nom" />
+                <input {...register('nom', { required: 'Requis' })} style={inputStyle} placeholder="Nom" />
               </Field>
               <Field label="Prénom">
-                <input {...register('prenom')} className={inputCls} placeholder="Prénom" />
+                <input {...register('prenom')} style={inputStyle} placeholder="Prénom" />
               </Field>
             </div>
             <Field label="Login" error={errors.login?.message}>
-              <input {...register('login', { required: 'Requis' })} className={inputCls} placeholder="Login de connexion" />
+              <input {...register('login', { required: 'Requis' })} style={inputStyle} placeholder="Login" />
             </Field>
             <Field label={editing ? 'Nouveau mot de passe (vide = inchangé)' : 'Mot de passe'} error={errors.password?.message}>
-              <input
-                {...register('password', { required: !editing ? 'Requis' : false })}
-                type="password"
-                className={inputCls}
-                placeholder={editing ? 'Laisser vide pour ne pas changer' : 'Mot de passe'}
-              />
+              <input {...register('password', { required: !editing ? 'Requis' : false })} type="password" style={inputStyle} placeholder={editing ? 'Laisser vide pour ne pas changer' : '••••••••'} />
             </Field>
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Email">
-                <input {...register('email')} type="email" className={inputCls} placeholder="email@..." />
-              </Field>
-              <Field label="Téléphone">
-                <input {...register('telephone')} className={inputCls} placeholder="0600000000" />
-              </Field>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <Field label="Email"><input {...register('email')} type="email" style={inputStyle} placeholder="email@..." /></Field>
+              <Field label="Téléphone"><input {...register('telephone')} style={inputStyle} placeholder="0600000000" /></Field>
             </div>
             <ModalActions onClose={() => setShowModal(false)} />
           </form>
@@ -202,42 +159,28 @@ export default function EmployesPage() {
 
       {/* Modal disponibilité */}
       {showDispo && (
-        <Modal title="Rechercher des employés disponibles" onClose={() => setShowDispo(false)}>
-          <form onSubmit={handleDispo(onSearchDispo)} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Date début">
-                <input {...registerDispo('dateDebut', { required: 'Requis' })} type="date" className={inputCls} />
-              </Field>
-              <Field label="Date fin">
-                <input {...registerDispo('dateFin', { required: 'Requis' })} type="date" className={inputCls} />
-              </Field>
+        <Modal title="Employés disponibles" onClose={() => setShowDispo(false)}>
+          <form onSubmit={handleDispo(onSearchDispo)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <Field label="Date début"><input {...registerDispo('dateDebut', { required: true })} type="date" style={inputStyle} /></Field>
+              <Field label="Date fin"><input {...registerDispo('dateFin', { required: true })} type="date" style={inputStyle} /></Field>
             </div>
-            <button
-              type="submit"
-              disabled={dispoLoading}
-              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
-            >
+            <button type="submit" disabled={dispoLoading}
+              style={{ padding: '10px', backgroundColor: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '500', cursor: 'pointer', opacity: dispoLoading ? 0.6 : 1 }}>
               {dispoLoading ? 'Recherche…' : 'Rechercher'}
             </button>
           </form>
-
           {dispoResult !== null && (
-            <div className="mt-4">
-              <p className="text-slate-400 text-sm mb-2">
-                {dispoResult.length === 0
-                  ? 'Aucun employé disponible sur cette période.'
-                  : `${dispoResult.length} employé(s) disponible(s) :`}
+            <div style={{ marginTop: '16px' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '8px' }}>
+                {dispoResult.length === 0 ? 'Aucun employé disponible.' : `${dispoResult.length} employé(s) disponible(s) :`}
               </p>
-              {dispoResult.length > 0 && (
-                <ul className="space-y-1">
-                  {dispoResult.map((e) => (
-                    <li key={e.id} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-700/30 text-sm">
-                      <span className="text-slate-400 font-mono text-xs">{e.matricule}</span>
-                      <span className="text-white">{e.nom} {e.prenom}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              {dispoResult.map((e) => (
+                <div key={e.id} style={{ display: 'flex', gap: '10px', padding: '8px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-input)', marginBottom: '6px' }}>
+                  <span style={{ color: 'var(--text-muted)', fontFamily: 'monospace', fontSize: '12px' }}>{e.matricule}</span>
+                  <span style={{ color: 'var(--text-primary)' }}>{e.nom} {e.prenom}</span>
+                </div>
+              ))}
             </div>
           )}
         </Modal>

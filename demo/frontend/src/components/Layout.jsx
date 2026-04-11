@@ -4,11 +4,11 @@ import Topbar from './Topbar'
 
 export default function Layout() {
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}>
       <Sidebar />
       <Topbar />
-      <main className="ml-64 pt-16 min-h-screen">
-        <div className="p-6">
+      <main style={{ marginLeft: '260px', paddingTop: '64px', minHeight: '100vh' }}>
+        <div style={{ padding: '24px' }}>
           <Outlet />
         </div>
       </main>
